@@ -7,9 +7,18 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExampleProject", "src\Examp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExampleTestsProject", "tests\ExampleTestsProject\ExampleTestsProject.csproj", "{BFDC0846-932B-48DB-94DB-C4A333B81A14}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleProject.SecondPackage", "src\ExampleProject.SecondPackage\ExampleProject.SecondPackage.csproj", "{02C16F03-CE3D-4A38-B509-7C07C552A356}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExampleProject.SecondPackage", "src\ExampleProject.SecondPackage\ExampleProject.SecondPackage.csproj", "{02C16F03-CE3D-4A38-B509-7C07C552A356}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotPackableProject", "src\NotPackableProject\NotPackableProject.csproj", "{1024F355-8DC1-469A-83BB-16E2218A46A2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NotPackableProject", "src\NotPackableProject\NotPackableProject.csproj", "{1024F355-8DC1-469A-83BB-16E2218A46A2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{65828D7D-DF22-4166-AC2B-E0EF74D3505C}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		Directory.Build.props = Directory.Build.props
+		icon.png = icon.png
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
