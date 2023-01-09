@@ -1,10 +1,10 @@
-﻿using Byndyusoft.ML.Tools.Metrics.Dtos;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Byndyusoft.ML.Tools.Metrics.Dtos;
 using Byndyusoft.ML.Tools.Metrics.Enums;
 using Byndyusoft.ML.Tools.Metrics.Extensions;
 using Byndyusoft.ML.Tools.Metrics.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Byndyusoft.ML.Tools.Metrics
 {
