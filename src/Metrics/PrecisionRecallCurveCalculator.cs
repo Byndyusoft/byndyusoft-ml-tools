@@ -86,7 +86,7 @@ namespace Byndyusoft.ML.Tools.Metrics
                     $"Arrays ({nameof(precisionValues)}, {nameof(recallValues)}) must have same size.");
 
             var inputLength = precisionValues.Length;
-            var resultLength = precisionValues.Length + 2;
+            var resultLength = precisionValues.Length + 3;
 
             var interpolatedPrecisionValues = new double[resultLength];
             var interpolatedRecallValues = new double[resultLength];
@@ -95,10 +95,12 @@ namespace Byndyusoft.ML.Tools.Metrics
             Array.Copy(precisionValues, 0, interpolatedPrecisionValues, 1, inputLength);
             interpolatedPrecisionValues[0] = 1d;
             interpolatedPrecisionValues[resultLength - 1] = 0d;
+            interpolatedPrecisionValues[resultLength - 2] = 0d;
 
             Array.Copy(recallValues, 0, interpolatedRecallValues, 1, inputLength);
             interpolatedRecallValues[0] = 0d;
             interpolatedRecallValues[resultLength - 1] = 1d;
+            interpolatedRecallValues[resultLength - 2] = interpolatedRecallValues[resultLength - 3];
 
             for (var i = resultLength - 1; i > 0; i--)
                 interpolatedPrecisionValues[i - 1] =
