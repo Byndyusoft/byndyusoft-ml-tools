@@ -11,7 +11,7 @@
 
 Входными данными для вычисления являются результаты классификации ([ClassificationResult](src/Metrics/Dtos/ClassificationResult.cs)):
 ```csharp
-    var classificationResult = new(actualClass: "class1", predictedClass: "class1", confidence: 0.9d);
+    var classificationResult = new ClassificationResult(actualClass: "class1", predictedClass: "class1", confidence: 0.9d);
 ```
 
 Регистрация в DI:
