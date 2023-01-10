@@ -1,21 +1,90 @@
-[![License](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+﻿[![License](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-# .NET Nuget publishing template
-This is a template repository with example github actions for .NET nuget packages creation and publishing
+# .NET ML Tools
 
-# How to use:
- - Remove example solution (ExampleSolution.sln, src and tests folders)
- - add icon reference to packaged projects ([example](src/ExampleProject/ExampleProject.csproj))
- - Change properties in Directory.Build.props file according to your needs (version, package tags, repository url)
- - fix **dotnet-version** in .github/workflows/\*.yml
+## Byndyusoft.ML.Tools.Metrics
 
-# How to publish pre-release to nuget.org:
+Библиотека для рассчёта метрик по результатам работы ML классификатора.
 
-Mark *This is a pre-release* checkbox when you create a release. 
+Реализовано вычисление метрик precision-recall для одного и нескольких классов
+([IPrecisionRecallCurveCalculator](src/Metrics/Interfaces/IPrecisionRecallCurveCalculator.cs), [IMultiClassPrecisionRecallCurvesCalculator](src/Metrics/Interfaces/IMultiClassPrecisionRecallCurvesCalculator.cs)).
 
-![image](https://user-images.githubusercontent.com/38452272/184600138-abc74f6e-3c7e-4c0a-ad51-426473f02917.png)
+Входными данными для вычисления являются результаты классификации ([ClassificationResult](src/Metrics/Dtos/ClassificationResult.cs)):
+```csharp
+    var classificationResult = new(actualClass: "class1", predictedClass: "class1", confidence: 0.9d);
+```
 
-The package version will be *<proj_version>-tags-<tag_name>* where *proj_version* is retrieved from .csproj or Directory.Build.props file.
+Регистрация в DI:
+```csharp
+    services.AddMLMetricsCalculators();
+```
+
+Пример получения precision-recall curve метрик для одного класса (результат [PrecisionRecallCurve](src/Metrics/Dtos/PrecisionRecallCurve.cs)):
+```csharp
+    public class PrecisionRecallCurveCalculatorExample
+    {
+        private readonly IPrecisionRecallCurveCalculator _calculator;
+
+        public PrecisionRecallCurveCalculatorExample(IPrecisionRecallCurveCalculator calculator)
+        {
+            _calculator = calculator;
+        }
+
+        public PrecisionRecallCurve Calculate()
+        {
+            var inputData = new ClassificationResult[]
+            {
+                new(actualClass: "class1", predictedClass: "class1", confidence: 0.9d),
+                new(actualClass: "class1", predictedClass: "class1", confidence: 0.98d),
+                new(actualClass: "class1", predictedClass: null, confidence: 0.5d),
+                new(actualClass: "class1", predictedClass: "class2", confidence: 0.6d),
+                new(actualClass: "class1", predictedClass: "class3", confidence: 0.3d),
+                new(actualClass: "class1", predictedClass: "class1", confidence: 0.85d),
+                new(actualClass: "class1", predictedClass: "class1", confidence: 0.7d)
+            };
+
+            var result = _calculator.Calculate("class1", inputData);
+
+            return result;
+        }
+    }
+```
+Пример получения precision-recall curve метрик по нескольким классам (результат [MultiClassPrecisionRecallCurveResult](src/Metrics/Dtos/MultiClassPrecisionRecallCurveResult.cs)):
+```csharp
+    public class MultiClassPrecisionRecallCurveCalculatorExample
+    {
+        private readonly IMultiClassPrecisionRecallCurvesCalculator _calculator;
+
+        public MultiClassPrecisionRecallCurveCalculatorExample(IMultiClassPrecisionRecallCurvesCalculator calculator)
+        {
+            _calculator = calculator;
+        }
+
+        public MultiClassPrecisionRecallCurveResult Calculate()
+        {
+            var inputData = new ClassificationResult[]
+            {
+                new(actualClass: "class1", predictedClass: "class1", confidence: 0.9d),
+                new(actualClass: "class1", predictedClass: "class1", confidence: 0.98d),
+                new(actualClass: "class1", predictedClass: null, confidence: 0.5d),
+                new(actualClass: "class2", predictedClass: "class2", confidence: 0.6d),
+                new(actualClass: "class2", predictedClass: "class3", confidence: 0.3d),
+                new(actualClass: "class3", predictedClass: "class3", confidence: 0.85d),
+                new(actualClass: "class3", predictedClass: "class3", confidence: 0.7d)
+            };
+
+            var result = _calculator.Calculate(inputData);
+
+            return result;
+        }
+    }
+```
+
+### Установка
+
+```shell
+dotnet add package Byndyusoft.ML.Tools.Metrics
+```
 
 # Maintainers
 [github.maintain@byndyusoft.com](mailto:github.maintain@byndyusoft.com)
