@@ -106,13 +106,22 @@ namespace Byndyusoft.ML.Tools.Metrics
                 interpolatedPrecisionValues[i - 1] =
                     Math.Max(interpolatedPrecisionValues[i - 1], interpolatedPrecisionValues[i]);
 
-            result.Add(new PrecisionRecallCurveDataPoint(interpolatedPrecisionValues[0], interpolatedRecallValues[0]));
+
+            var lastPoint =
+                new PrecisionRecallCurveDataPoint(interpolatedPrecisionValues[0], interpolatedRecallValues[0]);
+            result.Add(lastPoint);
+
             for (var i = 1; i < resultLength - 1; i++)
                 // ReSharper disable CompareOfFloatsByEqualityOperator
-                if (interpolatedPrecisionValues[i] != interpolatedPrecisionValues[i - 1] ||
-                    interpolatedPrecisionValues[i] != interpolatedPrecisionValues[i + 1])
-                    result.Add(new PrecisionRecallCurveDataPoint(interpolatedPrecisionValues[i],
-                        interpolatedRecallValues[i]));
+                if (interpolatedPrecisionValues[i + 1] != lastPoint.Precision &&
+                    interpolatedRecallValues[i + 1] != lastPoint.Recall)
+                {
+                    lastPoint =
+                        new PrecisionRecallCurveDataPoint(
+                            interpolatedPrecisionValues[i],
+                            interpolatedRecallValues[i]);
+                    result.Add(lastPoint);
+                }
             // ReSharper restore CompareOfFloatsByEqualityOperator
 
             result.Add(new PrecisionRecallCurveDataPoint(interpolatedPrecisionValues[resultLength - 1],
