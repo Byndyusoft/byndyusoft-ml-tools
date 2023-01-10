@@ -7,9 +7,9 @@
 Библиотека для рассчёта метрик по результатам работы ML классификатора.
 
 Реализовано вычисление метрик precision-recall для одного и нескольких классов
-(IPrecisionRecallCurveCalculator, IMultiClassPrecisionRecallCurvesCalculator).
+([IPrecisionRecallCurveCalculator](src/Metrics/Interfaces/IPrecisionRecallCurveCalculator.cs), [IMultiClassPrecisionRecallCurvesCalculator](src/Metrics/Interfaces/IMultiClassPrecisionRecallCurvesCalculator.cs)).
 
-Входными данными для вычисления являются результаты классификации (ClassificationResult):
+Входными данными для вычисления являются результаты классификации ([ClassificationResult](src/Metrics/Dtos/ClassificationResult.cs)):
 ```csharp
     var classificationResult = new(actualClass: "class1", predictedClass: "class1", confidence: 0.9d);
 ```
@@ -19,7 +19,7 @@
     services.AddMLMetricsCalculators();
 ```
 
-Пример получения precision-recall curve метрик для одного класса:
+Пример получения precision-recall curve метрик для одного класса (результат [PrecisionRecallCurve](src/Metrics/Dtos/PrecisionRecallCurve.cs)):
 ```csharp
     public class PrecisionRecallCurveCalculatorExample
     {
@@ -49,7 +49,7 @@
         }
     }
 ```
-Пример получения precision-recall curve метрик по нескольким классам:
+Пример получения precision-recall curve метрик по нескольким классам (результат [MultiClassPrecisionRecallCurveResult](src/Metrics/Dtos/MultiClassPrecisionRecallCurveResult.cs)):
 ```csharp
     public class MultiClassPrecisionRecallCurveCalculatorExample
     {
