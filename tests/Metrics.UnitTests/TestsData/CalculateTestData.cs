@@ -4,10 +4,11 @@ namespace Byndyusoft.ML.Tools.Metrics.UnitTests.TestsData
 {
     public class CalculateTestData
     {
-        public ClassificationResult[] Input { get; set; } = null!;
+        public ClassificationResult[] Arguments { get; set; } = null!;
 
         public double ExpectedMeanAveragePrecision { get; set; }
 
+        // TODO Удалить
         public double ExpectedWeightedAveragePrecision { get; set; }
 
         public PrecisionRecallCurve[] ExpectedPrecisionRecallCurves { get; set; } = null!;

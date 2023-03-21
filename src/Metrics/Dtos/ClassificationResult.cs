@@ -1,5 +1,6 @@
 ﻿namespace Byndyusoft.ML.Tools.Metrics.Dtos
 {
+    // TODO Продумать вариант, когда на вход будет подаваться список уверенностей
     public class ClassificationResult
     {
         public ClassificationResult(string actualClass, string? predictedClass, double confidence)

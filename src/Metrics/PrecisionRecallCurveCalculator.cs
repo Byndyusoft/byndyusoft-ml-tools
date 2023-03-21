@@ -8,6 +8,7 @@ using Byndyusoft.ML.Tools.Metrics.Interfaces;
 
 namespace Byndyusoft.ML.Tools.Metrics
 {
+    // TODO удалить из readme, не нужно давать в паблик
     public class PrecisionRecallCurveCalculator : IPrecisionRecallCurveCalculator
     {
         public PrecisionRecallCurve Calculate(string classValue, ClassificationResult[] classificationResults)

@@ -8,7 +8,7 @@ namespace Byndyusoft.ML.Tools.Metrics.UnitTests.TestsData
         {
             new()
             {
-                Input = new ClassificationResult[]
+                Arguments = new ClassificationResult[]
                 {
                     new("1", "1", 0.98d),
                     new("1", "1", 0.95d),
@@ -65,7 +65,7 @@ namespace Byndyusoft.ML.Tools.Metrics.UnitTests.TestsData
             },
             new()
             {
-                Input = new ClassificationResult[]
+                Arguments = new ClassificationResult[]
                 {
                     new("1", "1", 0.4d),
                     new("1", "1", 0.6d),

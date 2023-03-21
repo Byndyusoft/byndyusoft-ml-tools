@@ -20,7 +20,7 @@ namespace Byndyusoft.ML.Tools.Metrics.UnitTests
         public void TestCalculate_ReturnsExpectedResult(CalculateTestData data)
         {
             // Act
-            var result = _sut.Calculate(data.Input);
+            var result = _sut.Calculate(data.Arguments);
 
             // Assert
             AssertResult(result, data);

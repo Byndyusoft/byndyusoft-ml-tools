@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Byndyusoft.ML.Tools.Metrics.Extensions
 {
+    // TODO Переименовать
     public static class DependencyInjectionExtensions
     {
         public static IServiceCollection AddMLMetricsCalculators(this IServiceCollection services)

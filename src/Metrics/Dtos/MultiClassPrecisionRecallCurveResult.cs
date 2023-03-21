@@ -18,6 +18,7 @@ namespace Byndyusoft.ML.Tools.Metrics.Dtos
 
         public double MeanAveragePrecision { get; }
 
+        // TODO Удалить
         public double WeightedAveragePrecision { get; }
     }
 }

@@ -35,6 +35,7 @@ namespace Byndyusoft.ML.Tools.Metrics
                 precisionRecallCurves.Add(precisionRecallCurve);
             }
 
+            // TODO Удалить возврат взвешенного AP
             var weightedAveragePrecision =
                 precisionRecallCurves
                     .AsParallel()
@@ -79,6 +80,7 @@ namespace Byndyusoft.ML.Tools.Metrics
             Dictionary<string, HashSet<ClassificationResult>> dictionaryOfHashSets,
             ClassificationResult classificationResult)
         {
+            // TODO Вернуть как было в коммите 28311e15adc0237f01db0dabf91daf6a589e288d
             var keys = new[] { classificationResult.ActualClass, classificationResult.PredictedClass };
 
             foreach (var key in keys)

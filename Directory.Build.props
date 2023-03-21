@@ -19,8 +19,6 @@
 		<RepositoryUrl>https://github.com/Byndyusoft/byndyusoft-ml-tools</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		
-		<PackageIcon>icon.png</PackageIcon>
-		
 		<IsPackable>false</IsPackable>
 		
 	</PropertyGroup>
