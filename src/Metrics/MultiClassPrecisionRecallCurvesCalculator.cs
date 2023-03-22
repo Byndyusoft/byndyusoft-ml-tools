@@ -1,24 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Byndyusoft.ML.Tools.Metrics.Dtos;
+using Byndyusoft.ML.Tools.Metrics.Helpers;
 using Byndyusoft.ML.Tools.Metrics.Interfaces;
 
 namespace Byndyusoft.ML.Tools.Metrics
 {
     public class MultiClassPrecisionRecallCurvesCalculator : IMultiClassPrecisionRecallCurvesCalculator
     {
-        private readonly IPrecisionRecallCurveCalculator _precisionRecallCurveCalculator;
-
-        public MultiClassPrecisionRecallCurvesCalculator(IPrecisionRecallCurveCalculator precisionRecallCurveCalculator)
-        {
-            _precisionRecallCurveCalculator = precisionRecallCurveCalculator;
-        }
-
         public MultiClassPrecisionRecallCurveResult Calculate(ClassificationResult[] classificationResults)
         {
             var classificationResultsByClass = GenerateClassResultsDictionary(classificationResults);
-            var actualClassesWeights =
-                CountClassWeights(classificationResultsByClass.Keys.ToArray(), classificationResults);
 
             var precisionRecallCurves = new List<PrecisionRecallCurve>();
 
@@ -28,41 +20,14 @@ namespace Byndyusoft.ML.Tools.Metrics
                 if (string.IsNullOrEmpty(classValue))
                     continue;
                 var classificationResultsOfTheClass = keyValuePair.Value;
-                var precisionRecallCurve = _precisionRecallCurveCalculator.Calculate(
+                var precisionRecallCurve = PrecisionRecallCurveCalculatorHelper.Calculate(
                     classValue,
                     classificationResultsOfTheClass.ToArray());
 
                 precisionRecallCurves.Add(precisionRecallCurve);
             }
 
-            // TODO Удалить возврат взвешенного AP
-            var weightedAveragePrecision =
-                precisionRecallCurves
-                    .AsParallel()
-                    .Select(curve => curve.AveragePrecision * actualClassesWeights[curve.ClassValue])
-                    .Sum();
-
-            return new MultiClassPrecisionRecallCurveResult(precisionRecallCurves, weightedAveragePrecision);
-        }
-
-        private static Dictionary<string, double> CountClassWeights(
-            string[] allClasses,
-            ClassificationResult[] classificationResults)
-        {
-            var result = new Dictionary<string, double>();
-            var classesCount = new Dictionary<string, int>();
-            var totalCount = classificationResults.Length;
-
-            foreach (var @class in allClasses)
-                classesCount[@class] = 0;
-
-            foreach (var classificationResult in classificationResults)
-                classesCount[classificationResult.ActualClass]++;
-
-            foreach (var @class in allClasses)
-                result[@class] = (double)classesCount[@class] / totalCount;
-
-            return result;
+            return new MultiClassPrecisionRecallCurveResult(precisionRecallCurves);
         }
 
         private static Dictionary<string, HashSet<ClassificationResult>> GenerateClassResultsDictionary(
@@ -80,20 +45,25 @@ namespace Byndyusoft.ML.Tools.Metrics
             Dictionary<string, HashSet<ClassificationResult>> dictionaryOfHashSets,
             ClassificationResult classificationResult)
         {
-            // TODO Вернуть как было в коммите 28311e15adc0237f01db0dabf91daf6a589e288d
-            var keys = new[] { classificationResult.ActualClass, classificationResult.PredictedClass };
+            AddToDictionaryOfHashSets(dictionaryOfHashSets, classificationResult, classificationResult.ActualClass);
+            AddToDictionaryOfHashSets(dictionaryOfHashSets, classificationResult, classificationResult.PredictedClass);
+        }
 
-            foreach (var key in keys)
-                if (string.IsNullOrEmpty(key) == false)
-                {
-                    if (dictionaryOfHashSets.TryGetValue(key!, out var hashSet) == false)
-                    {
-                        hashSet = new HashSet<ClassificationResult>();
-                        dictionaryOfHashSets.Add(key!, hashSet);
-                    }
+        private static void AddToDictionaryOfHashSets(
+            Dictionary<string, HashSet<ClassificationResult>> dictionaryOfHashSets,
+            ClassificationResult classificationResult,
+            string? key)
+        {
+            if (string.IsNullOrEmpty(key))
+                return;
 
-                    hashSet.Add(classificationResult);
-                }
+            if (dictionaryOfHashSets.TryGetValue(key!, out var hashSet) == false)
+            {
+                hashSet = new HashSet<ClassificationResult>();
+                dictionaryOfHashSets.Add(key!, hashSet);
+            }
+
+            hashSet.Add(classificationResult);
         }
     }
 }

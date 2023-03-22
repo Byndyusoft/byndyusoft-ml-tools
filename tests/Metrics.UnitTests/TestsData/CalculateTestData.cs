@@ -8,9 +8,6 @@ namespace Byndyusoft.ML.Tools.Metrics.UnitTests.TestsData
 
         public double ExpectedMeanAveragePrecision { get; set; }
 
-        // TODO Удалить
-        public double ExpectedWeightedAveragePrecision { get; set; }
-
         public PrecisionRecallCurve[] ExpectedPrecisionRecallCurves { get; set; } = null!;
     }
 }

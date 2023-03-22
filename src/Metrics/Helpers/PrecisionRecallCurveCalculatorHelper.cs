@@ -4,14 +4,12 @@ using System.Linq;
 using Byndyusoft.ML.Tools.Metrics.Dtos;
 using Byndyusoft.ML.Tools.Metrics.Enums;
 using Byndyusoft.ML.Tools.Metrics.Extensions;
-using Byndyusoft.ML.Tools.Metrics.Interfaces;
 
-namespace Byndyusoft.ML.Tools.Metrics
+namespace Byndyusoft.ML.Tools.Metrics.Helpers
 {
-    // TODO удалить из readme, не нужно давать в паблик
-    public class PrecisionRecallCurveCalculator : IPrecisionRecallCurveCalculator
+    public static class PrecisionRecallCurveCalculatorHelper
     {
-        public PrecisionRecallCurve Calculate(string classValue, ClassificationResult[] classificationResults)
+        public static PrecisionRecallCurve Calculate(string classValue, ClassificationResult[] classificationResults)
         {
             classificationResults = classificationResults.OrderByDescending(i => i.Confidence).ToArray();
 
@@ -113,9 +111,9 @@ namespace Byndyusoft.ML.Tools.Metrics
             result.Add(lastPoint);
 
             for (var i = 1; i < resultLength - 1; i++)
-                // ReSharper disable CompareOfFloatsByEqualityOperator
-                if (interpolatedPrecisionValues[i + 1] != lastPoint.Precision &&
-                    interpolatedRecallValues[i + 1] != lastPoint.Recall)
+            {
+                if (AreEqual(interpolatedPrecisionValues[i + 1], lastPoint.Precision) == false &&
+                    AreEqual(interpolatedRecallValues[i + 1], lastPoint.Recall) == false)
                 {
                     lastPoint =
                         new PrecisionRecallCurveDataPoint(
@@ -123,12 +121,17 @@ namespace Byndyusoft.ML.Tools.Metrics
                             interpolatedRecallValues[i]);
                     result.Add(lastPoint);
                 }
-            // ReSharper restore CompareOfFloatsByEqualityOperator
+            }
 
             result.Add(new PrecisionRecallCurveDataPoint(interpolatedPrecisionValues[resultLength - 1],
                 interpolatedRecallValues[resultLength - 1]));
 
             return result.ToArray();
+        }
+
+        private static bool AreEqual(double left, double right)
+        {
+            return Math.Abs(left - right) < double.Epsilon;
         }
     }
 }

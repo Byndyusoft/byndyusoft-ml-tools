@@ -11,7 +11,7 @@ namespace Byndyusoft.ML.Tools.Metrics.UnitTests
         [SetUp]
         public void Setup()
         {
-            _sut = new MultiClassPrecisionRecallCurvesCalculator(new PrecisionRecallCurveCalculator());
+            _sut = new MultiClassPrecisionRecallCurvesCalculator();
         }
 
         private MultiClassPrecisionRecallCurvesCalculator _sut = default!;
@@ -47,8 +47,6 @@ namespace Byndyusoft.ML.Tools.Metrics.UnitTests
 
             Assert.That(result, Is.Not.Null);
             Assert.That(result.MeanAveragePrecision, Is.EqualTo(testData.ExpectedMeanAveragePrecision).Within(epsilon));
-            Assert.That(result.WeightedAveragePrecision,
-                Is.EqualTo(testData.ExpectedWeightedAveragePrecision).Within(epsilon));
 
             var resultCurves = result.PrecisionRecallCurves.ToDictionary(x => x.ClassValue);
             var expectedCurves = testData.ExpectedPrecisionRecallCurves.ToDictionary(x => x.ClassValue);

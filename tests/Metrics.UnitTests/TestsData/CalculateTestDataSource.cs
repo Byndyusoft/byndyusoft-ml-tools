@@ -26,7 +26,6 @@ namespace Byndyusoft.ML.Tools.Metrics.UnitTests.TestsData
                     new("3", "2", 0.5d),
                 },
                 ExpectedMeanAveragePrecision = 0.62037037037037035d,
-                ExpectedWeightedAveragePrecision = 0.61904761904761907d,
                 ExpectedPrecisionRecallCurves = new PrecisionRecallCurve[]
                 {
                     new(
@@ -87,7 +86,6 @@ namespace Byndyusoft.ML.Tools.Metrics.UnitTests.TestsData
                     new("3", "2", 0.2d)
                 },
                 ExpectedMeanAveragePrecision = 0.51477324263038549d,
-                ExpectedWeightedAveragePrecision = 0.52473544973544972d,
                 ExpectedPrecisionRecallCurves = new PrecisionRecallCurve[]
                 {
                     new(
