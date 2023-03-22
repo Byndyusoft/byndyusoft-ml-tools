@@ -2,7 +2,7 @@
 
 # .NET ML Tools
 
-## Byndyusoft.ML.Tools.Metrics
+## Byndyusoft.ML.Tools.Metrics [![Nuget](https://img.shields.io/nuget/v/Byndyusoft.MaskedSerialization.svg)](https://www.nuget.org/packages/Byndyusoft.MaskedSerialization/) [![Downloads](https://img.shields.io/nuget/dt/Byndyusoft.MaskedSerialization.svg)](https://www.nuget.org/packages/Byndyusoft.MaskedSerialization/)
 
 Библиотека для рассчёта метрик по результатам работы ML классификатора.
 
