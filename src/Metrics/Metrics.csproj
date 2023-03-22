@@ -3,6 +3,7 @@
   <PropertyGroup>
     <IsPackable>true</IsPackable>
     <PackageIcon>icon.png</PackageIcon>
+    <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
