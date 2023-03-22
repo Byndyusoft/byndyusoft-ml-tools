@@ -9,15 +9,20 @@
 Реализовано вычисление метрик precision-recall нескольких классов
 ([IMultiClassPrecisionRecallCurvesCalculator](src/Metrics/Interfaces/IMultiClassPrecisionRecallCurvesCalculator.cs)).
 
+### Входные данные
+
 Входными данными для вычисления являются результаты классификации ([ClassificationResult](src/Metrics/Dtos/ClassificationResult.cs)):
 ```csharp
     var classificationResult = new ClassificationResult(actualClass: "class1", predictedClass: "class1", confidence: 0.9d);
 ```
 
-Регистрация в DI:
+### Регистрация в DI
+
 ```csharp
     services.AddMLMetricsCalculators();
 ```
+
+### Пример
 
 Пример получения precision-recall curve метрик по нескольким классам (результат [MultiClassPrecisionRecallCurveResult](src/Metrics/Dtos/MultiClassPrecisionRecallCurveResult.cs)):
 ```csharp
