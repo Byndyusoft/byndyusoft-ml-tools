@@ -5,7 +5,7 @@ using System.Linq;
 namespace Byndyusoft.ML.Tools.Metrics.Helpers
 {
     /// <summary>
-    ///     Douglas Peucker Reduction algorithm.
+    ///     Douglas Peucker Reduction algorithm. <see href="https://gist.github.com/ahancock1/0d99b43c4c01ef9b4fe4a5e7ad1e9029" />
     /// </summary>
     /// <remarks>
     ///     Ramer Douglas Peucker algorithm is a line simplification
