@@ -4,12 +4,16 @@ using System.Linq;
 using Byndyusoft.ML.Tools.Metrics.Dtos;
 using Byndyusoft.ML.Tools.Metrics.Enums;
 using Byndyusoft.ML.Tools.Metrics.Extensions;
+using Byndyusoft.ML.Tools.Metrics.Settings;
 
 namespace Byndyusoft.ML.Tools.Metrics.Helpers
 {
     public static class PrecisionRecallCurveCalculatorHelper
     {
-        public static PrecisionRecallCurve Calculate(string classValue, ClassificationResult[] classificationResults)
+        public static PrecisionRecallCurve Calculate(
+            string classValue, 
+            ClassificationResult[] classificationResults,
+            PrecisionRecallCurveSettings precisionRecallCurveSettings)
         {
             classificationResults = classificationResults.OrderByDescending(i => i.Confidence).ToArray();
 
@@ -51,6 +55,8 @@ namespace Byndyusoft.ML.Tools.Metrics.Helpers
                 CalculateInterpolatedPrecisionRecallCurveDataPoints(precisionValues, recallValues);
 
             var averagePrecision = CalculateAveragePrecision(precisionRecallCurvePoints);
+
+            precisionRecallCurvePoints = ReduceDataPointsIfNeeded(precisionRecallCurvePoints, precisionRecallCurveSettings);
 
             return new PrecisionRecallCurve(
                 classValue,
@@ -132,6 +138,24 @@ namespace Byndyusoft.ML.Tools.Metrics.Helpers
         private static bool AreEqual(double left, double right)
         {
             return Math.Abs(left - right) < double.Epsilon;
+        }
+
+        private static PrecisionRecallCurveDataPoint[] ReduceDataPointsIfNeeded(
+            PrecisionRecallCurveDataPoint[] precisionRecallCurvePoints,
+            PrecisionRecallCurveSettings precisionRecallCurveSettings)
+        {
+            if (precisionRecallCurveSettings.CurveShouldBeReduced())
+            {
+                var points = precisionRecallCurvePoints.Select(i => new Point(i.Precision, i.Recall)).ToArray();
+                var reducedPoints = DouglasPeuckerInterpolation.Interpolate(
+                    points,
+                    precisionRecallCurveSettings.MaxDataPointsCountInCurve,
+                    precisionRecallCurveSettings.ReduceInterpolationTolerance);
+                precisionRecallCurvePoints =
+                    reducedPoints.Select(i => new PrecisionRecallCurveDataPoint(i.X, i.Y)).ToArray();
+            }
+
+            return precisionRecallCurvePoints;
         }
     }
 }

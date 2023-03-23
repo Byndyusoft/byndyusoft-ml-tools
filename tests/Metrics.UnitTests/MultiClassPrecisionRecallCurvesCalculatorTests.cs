@@ -1,5 +1,6 @@
 using System.Linq;
 using Byndyusoft.ML.Tools.Metrics.Dtos;
+using Byndyusoft.ML.Tools.Metrics.Interfaces;
 using Byndyusoft.ML.Tools.Metrics.UnitTests.TestsData;
 using NUnit.Framework;
 
@@ -11,16 +12,16 @@ namespace Byndyusoft.ML.Tools.Metrics.UnitTests
         [SetUp]
         public void Setup()
         {
-            _sut = new MultiClassPrecisionRecallCurvesCalculator();
+            _calculator = new MultiClassPrecisionRecallCurvesCalculator();
         }
 
-        private MultiClassPrecisionRecallCurvesCalculator _sut = default!;
+        private IMultiClassPrecisionRecallCurvesCalculator _calculator = default!;
 
         [TestCaseSource(typeof(CalculateTestDataSource), nameof(CalculateTestDataSource.CalculateCases))]
         public void TestCalculate_ReturnsExpectedResult(CalculateTestData data)
         {
             // Act
-            var result = _sut.Calculate(data.Arguments);
+            var result = _calculator.Calculate(data.Arguments);
 
             // Assert
             AssertResult(result, data);
