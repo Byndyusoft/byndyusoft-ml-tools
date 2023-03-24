@@ -43,7 +43,8 @@ namespace Byndyusoft.ML.Tools.Metrics
 
             foreach (var classificationResult in classificationResults)
             {
-                AddToDictionaryOfHashSets(classificationResultsByClass, classificationResult, classificationResult.ActualClass);
+                // TODO Реализовать расчет по ActualClass, если будет известна уверенность по нему, пока убираю
+                // AddToDictionaryOfHashSets(classificationResultsByClass, classificationResult, classificationResult.ActualClass);
                 AddToDictionaryOfHashSets(classificationResultsByClass, classificationResult, classificationResult.PredictedClass);
             }
 
