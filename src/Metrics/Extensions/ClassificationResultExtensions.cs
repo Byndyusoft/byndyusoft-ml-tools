@@ -6,7 +6,7 @@ namespace Byndyusoft.ML.Tools.Metrics.Extensions
     public static class ClassificationResultExtensions
     {
         public static ConfusionMatrixValue CalculateConfusionMatrixValue(
-            this ClassificationResultWithConfidence classResult,
+            this ClassificationResult classResult,
             string currentClassValue)
         {
             var isPredictedTrue = string.Equals(classResult.PredictedClass, currentClassValue);
