@@ -6,7 +6,7 @@ namespace Byndyusoft.ML.Tools.Metrics.Interfaces
     public interface IMultiClassPrecisionRecallCurvesCalculator
     {
         MultiClassPrecisionRecallCurveResult Calculate(
-            ClassificationResult[] classificationResults,
+            ClassificationResultWithConfidence[] classificationResults,
             PrecisionRecallCurveSettings? precisionRecallCurveSettings = null);
     }
 }

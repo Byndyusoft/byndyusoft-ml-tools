@@ -12,7 +12,7 @@ namespace Byndyusoft.ML.Tools.Metrics.Helpers
     {
         public static PrecisionRecallCurve Calculate(
             string classValue, 
-            ClassificationResult[] classificationResults,
+            ClassificationResultWithConfidence[] classificationResults,
             PrecisionRecallCurveSettings precisionRecallCurveSettings)
         {
             classificationResults = classificationResults.OrderByDescending(i => i.Confidence).ToArray();

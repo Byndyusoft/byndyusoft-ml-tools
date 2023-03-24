@@ -10,7 +10,7 @@ namespace Byndyusoft.ML.Tools.Metrics
     public class MultiClassPrecisionRecallCurvesCalculator : IMultiClassPrecisionRecallCurvesCalculator
     {
         public MultiClassPrecisionRecallCurveResult Calculate(
-            ClassificationResult[] classificationResults,
+            ClassificationResultWithConfidence[] classificationResults,
             PrecisionRecallCurveSettings? precisionRecallCurveSettings)
         {
             precisionRecallCurveSettings ??= PrecisionRecallCurveSettings.Default();
@@ -36,10 +36,10 @@ namespace Byndyusoft.ML.Tools.Metrics
             return new MultiClassPrecisionRecallCurveResult(precisionRecallCurves);
         }
 
-        private static Dictionary<string, HashSet<ClassificationResult>> GenerateClassResultsDictionary(
-            ClassificationResult[] classificationResults)
+        private static Dictionary<string, HashSet<ClassificationResultWithConfidence>> GenerateClassResultsDictionary(
+            ClassificationResultWithConfidence[] classificationResults)
         {
-            var classificationResultsByClass = new Dictionary<string, HashSet<ClassificationResult>>();
+            var classificationResultsByClass = new Dictionary<string, HashSet<ClassificationResultWithConfidence>>();
 
             foreach (var classificationResult in classificationResults)
             {
@@ -52,8 +52,8 @@ namespace Byndyusoft.ML.Tools.Metrics
         }
 
         private static void AddToDictionaryOfHashSets(
-            Dictionary<string, HashSet<ClassificationResult>> dictionaryOfHashSets,
-            ClassificationResult classificationResult,
+            Dictionary<string, HashSet<ClassificationResultWithConfidence>> dictionaryOfHashSets,
+            ClassificationResultWithConfidence classificationResult,
             string? key)
         {
             if (string.IsNullOrEmpty(key))
@@ -61,7 +61,7 @@ namespace Byndyusoft.ML.Tools.Metrics
 
             if (dictionaryOfHashSets.TryGetValue(key, out var hashSet) == false)
             {
-                hashSet = new HashSet<ClassificationResult>();
+                hashSet = new HashSet<ClassificationResultWithConfidence>();
                 dictionaryOfHashSets.Add(key, hashSet);
             }
 

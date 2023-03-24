@@ -4,7 +4,7 @@ namespace Byndyusoft.ML.Tools.Metrics.UnitTests.TestsData
 {
     public class CalculateTestData
     {
-        public ClassificationResult[] Arguments { get; set; } = null!;
+        public ClassificationResultWithConfidence[] Arguments { get; set; } = null!;
 
         public double ExpectedMeanAveragePrecision { get; set; }
 
