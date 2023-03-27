@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Byndyusoft.ML.Tools.Metrics.Dtos;
+using Byndyusoft.ML.Tools.Metrics.Extensions;
 using Byndyusoft.ML.Tools.Metrics.Helpers;
 using Byndyusoft.ML.Tools.Metrics.Interfaces;
 using Byndyusoft.ML.Tools.Metrics.Settings;
@@ -36,36 +37,14 @@ namespace Byndyusoft.ML.Tools.Metrics
             return new MultiClassPrecisionRecallCurveResult(precisionRecallCurves);
         }
 
-        private static Dictionary<string, HashSet<ClassificationResultWithConfidence>> GenerateClassResultsDictionary(
-            ClassificationResultWithConfidence[] classificationResults)
+        private static IDictionary<string, HashSet<T>> GenerateClassResultsDictionary<T>(
+            T[] classificationResults)
+            where T : ClassificationResult
         {
-            var classificationResultsByClass = new Dictionary<string, HashSet<ClassificationResultWithConfidence>>();
-
-            foreach (var classificationResult in classificationResults)
-            {
-                // TODO Реализовать расчет по ActualClass, если будет известна уверенность по нему, пока убираю
-                // AddToDictionaryOfHashSets(classificationResultsByClass, classificationResult, classificationResult.ActualClass);
-                AddToDictionaryOfHashSets(classificationResultsByClass, classificationResult, classificationResult.PredictedClass);
-            }
+            // TODO Реализовать расчет по ActualClass, если будет известна уверенность по нему, пока убираю
+            var classificationResultsByClass = classificationResults.ToDictionaryOfHashSets(i => i.ActualClass, i => i.PredictedClass);
 
             return classificationResultsByClass;
-        }
-
-        private static void AddToDictionaryOfHashSets(
-            Dictionary<string, HashSet<ClassificationResultWithConfidence>> dictionaryOfHashSets,
-            ClassificationResultWithConfidence classificationResult,
-            string? key)
-        {
-            if (string.IsNullOrEmpty(key))
-                return;
-
-            if (dictionaryOfHashSets.TryGetValue(key, out var hashSet) == false)
-            {
-                hashSet = new HashSet<ClassificationResultWithConfidence>();
-                dictionaryOfHashSets.Add(key, hashSet);
-            }
-
-            hashSet.Add(classificationResult);
         }
     }
 }
