@@ -2,13 +2,13 @@
 {
     public class OneClassClassificationMetrics
     {
-        public OneClassClassificationMetrics(string classValue, ClassificationMetrics classificationMetrics)
+        public OneClassClassificationMetrics(string @class, ClassificationMetrics classificationMetrics)
         {
-            ClassValue = classValue;
+            Class = @class;
             ClassificationMetrics = classificationMetrics;
         }
 
-        public string ClassValue { get; }
+        public string Class { get; }
 
         public ClassificationMetrics ClassificationMetrics { get; }
     }

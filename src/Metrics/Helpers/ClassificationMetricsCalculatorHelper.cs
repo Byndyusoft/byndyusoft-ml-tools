@@ -1,63 +1,75 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
 using Byndyusoft.ML.Tools.Metrics.Dtos;
 using Byndyusoft.ML.Tools.Metrics.Enums;
-using Byndyusoft.ML.Tools.Metrics.Extensions;
 
 namespace Byndyusoft.ML.Tools.Metrics.Helpers
 {
     public static class ClassificationMetricsCalculatorHelper
     {
-        public static OneClassClassificationMetrics Calculate(
-            string classValue,
-            ClassificationResult[] classificationResults)
+        public static ClassificationMetrics Calculate(
+            ConfusionMatrixValueCounts confusionMatrixValueCounts)
         {
-            var countsByConfusionMatrixValue = new Dictionary<ConfusionMatrixValue, int>();
-            foreach (var confusionMatrixValue in Enum.GetValues<ConfusionMatrixValue>())
-                countsByConfusionMatrixValue.Add(confusionMatrixValue, 0);
+            var precision = CalculatePrecision(confusionMatrixValueCounts);
+            var recall = CalculateRecall(confusionMatrixValueCounts);
+            var f1Score = CalculateF1Score(confusionMatrixValueCounts);
 
-            foreach (var classificationResult in classificationResults)
-            {
-                var confusionMatrixValue = classificationResult.CalculateConfusionMatrixValue(classValue);
-                countsByConfusionMatrixValue[confusionMatrixValue]++;
-            }
-
-            var truePositive = countsByConfusionMatrixValue[ConfusionMatrixValue.TruePositive];
-            var falsePositive = countsByConfusionMatrixValue[ConfusionMatrixValue.FalsePositive];
-            var falseNegative = countsByConfusionMatrixValue[ConfusionMatrixValue.FalseNegative];
-
-            var precision = CalculatePrecision(truePositive, falsePositive);
-            var recall = CalculateRecall(truePositive, falseNegative);
-            var f1Score = CalculateF1Score(precision, recall);
-
-            var classificationMetrics = new ClassificationMetrics(precision, recall, f1Score);
-            return new OneClassClassificationMetrics(classValue, classificationMetrics);
+            return new ClassificationMetrics(precision, recall, f1Score);
         }
 
-        private static double? CalculatePrecision(int truePositiveCount, int falsePositiveCount)
+        public static ClassificationMetrics CalculateMicroMetrics(
+            MultiClassConfusionMatrixValueCounts multiClassConfusionMatrixValueCounts)
         {
-            var sum = truePositiveCount + falsePositiveCount;
+            var totalConfusionMatrixValueCounts = multiClassConfusionMatrixValueCounts.GetTotalCounts();
+            return Calculate(totalConfusionMatrixValueCounts);
+        }
+
+        public static ClassificationMetrics CalculateMacroMetrics(ClassificationMetrics[] classificationMetricsByClass)
+        {
+            var precision = GetAverage(classificationMetricsByClass, i => i.Precision);
+            var recall = GetAverage(classificationMetricsByClass, i => i.Recall);
+            var f1Score = GetAverage(classificationMetricsByClass, i => i.F1Score);
+
+            return new ClassificationMetrics(precision, recall, f1Score);
+        }
+
+        private static double? CalculatePrecision(ConfusionMatrixValueCounts confusionMatrixValueCounts)
+        {
+            var truePositiveCount = confusionMatrixValueCounts.GetCount(ConfusionMatrixValue.TruePositive);
+            var sum = truePositiveCount + confusionMatrixValueCounts.GetCount(ConfusionMatrixValue.FalsePositive);
             if (sum == 0)
                 return null;
 
             return (double)truePositiveCount / sum;
         }
 
-        private static double? CalculateRecall(int truePositiveCount, int falseNegativeCount)
+        private static double? CalculateRecall(ConfusionMatrixValueCounts confusionMatrixValueCounts)
         {
-            var sum = truePositiveCount + falseNegativeCount;
+            var truePositiveCount = confusionMatrixValueCounts.GetCount(ConfusionMatrixValue.TruePositive);
+            var sum = truePositiveCount + confusionMatrixValueCounts.GetCount(ConfusionMatrixValue.FalseNegative);
             if (sum == 0)
                 return null;
 
             return (double)truePositiveCount / sum;
         }
 
-        private static double? CalculateF1Score(double? precision, double? recall)
+        private static double? CalculateF1Score(ConfusionMatrixValueCounts confusionMatrixValueCounts)
         {
-            if (precision is null || recall is null)
+            var truePositiveCount = confusionMatrixValueCounts.GetCount(ConfusionMatrixValue.TruePositive);
+            var doubledDivisor = 2 * truePositiveCount +
+                                 confusionMatrixValueCounts.GetCount(ConfusionMatrixValue.FalsePositive) +
+                                 confusionMatrixValueCounts.GetCount(ConfusionMatrixValue.FalseNegative);
+
+            if (doubledDivisor == 0)
                 return null;
 
-            return 2 * precision.Value * recall.Value / (precision.Value + recall.Value);
+            return truePositiveCount * 2D / doubledDivisor;
+        }
+
+        private static double? GetAverage(ClassificationMetrics[] classificationResults,
+            Func<ClassificationMetrics, double?> metricValueGetter)
+        {
+            return classificationResults.Select(metricValueGetter).Average(i => i);
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Byndyusoft.ML.Tools.Metrics.Dtos;
-using Byndyusoft.ML.Tools.Metrics.Extensions;
 using Byndyusoft.ML.Tools.Metrics.Helpers;
 using Byndyusoft.ML.Tools.Metrics.Interfaces;
 
@@ -11,19 +10,23 @@ namespace Byndyusoft.ML.Tools.Metrics
     {
         public MultiClassClassificationMetrics Calculate(ClassificationResult[] classificationResults)
         {
-            var classificationResultsByClass = classificationResults
-                .ToDictionaryOfHashSets(i => i.ActualClass, i => i.PredictedClass);
+            var multiClassConfusionMatrixValueCounts = MultiClassConfusionMatrixValueCounts.Generate(classificationResults);
 
             var oneClassClassificationMetricsList = new List<OneClassClassificationMetrics>();
 
-            foreach (var (classValue, classificationResultsOfTheClass) in classificationResultsByClass.OrderBy(i => i.Key))
+            foreach (var (classValue, confusionMatrixValueCounts) in multiClassConfusionMatrixValueCounts.Enumerate())
             {
-                var oneClassClassificationMetrics = ClassificationMetricsCalculatorHelper.Calculate(classValue, classificationResultsOfTheClass.ToArray());
+                var classificationMetrics = ClassificationMetricsCalculatorHelper.Calculate(confusionMatrixValueCounts);
+                var oneClassClassificationMetrics = new OneClassClassificationMetrics(classValue, classificationMetrics);
                 oneClassClassificationMetricsList.Add(oneClassClassificationMetrics);
             }
 
-            // TODO рассчитать микро и макро метрики
-            return new MultiClassClassificationMetrics(oneClassClassificationMetricsList.ToArray(), null, null);
+            var macroMetrics = ClassificationMetricsCalculatorHelper.CalculateMacroMetrics(
+                oneClassClassificationMetricsList.Select(i => i.ClassificationMetrics).ToArray());
+            var microMetrics = ClassificationMetricsCalculatorHelper.CalculateMicroMetrics(multiClassConfusionMatrixValueCounts);
+
+
+            return new MultiClassClassificationMetrics(oneClassClassificationMetricsList.ToArray(), microMetrics, macroMetrics);
         }
     }
 }

@@ -30,9 +30,8 @@ namespace Byndyusoft.ML.Tools.Metrics.UnitTests
             var multiClassClassificationMetrics = _calculator.Calculate(testData.Arguments);
 
             // Assert
-            multiClassClassificationMetrics.Should().BeEquivalentTo(
-                testData.ExpectedResult, 
-                o => o.WithStrictOrdering().WithApproximateDoubleValues(_epsilon));
+            multiClassClassificationMetrics.Should().BeEquivalentTo(testData.ExpectedResult,
+                o => o.WithApproximateDoubleValues(_epsilon));
         }
     }
 }
