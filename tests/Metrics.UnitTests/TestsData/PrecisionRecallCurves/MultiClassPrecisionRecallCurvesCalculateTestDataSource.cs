@@ -1,10 +1,10 @@
 using Byndyusoft.ML.Tools.Metrics.Dtos;
 
-namespace Byndyusoft.ML.Tools.Metrics.UnitTests.TestsData
+namespace Byndyusoft.ML.Tools.Metrics.UnitTests.TestsData.PrecisionRecallCurves
 {
     public static class MultiClassPrecisionRecallCurvesCalculateTestDataSource
     {
-        public static MultiClassPrecisionRecallCurvesCalculateTestData[] CalculateCases =
+        public static MultiClassPrecisionRecallCurvesCalculateTestData[] Cases =
         {
             new()
             {
