@@ -11,6 +11,8 @@ namespace Byndyusoft.ML.Tools.Metrics.UnitTests.TestsData.PrecisionRecallCurves
 
         public PrecisionRecallCurve[] ExpectedPrecisionRecallCurves { get; set; } = Array.Empty<PrecisionRecallCurve>();
 
+        public double Epsilon { get; set; }
+
         public static MultiClassPrecisionRecallCurvesCalculateTestData[] Cases =
         {
             new()
@@ -67,7 +69,8 @@ namespace Byndyusoft.ML.Tools.Metrics.UnitTests.TestsData.PrecisionRecallCurves
                             new(0d, 0.5d),
                             new(0d, 1d)
                         })
-                }
+                },
+                Epsilon = 0.000001D,
             },
             new()
             {
@@ -133,7 +136,8 @@ namespace Byndyusoft.ML.Tools.Metrics.UnitTests.TestsData.PrecisionRecallCurves
                             new(0d, 0.5d),
                             new(0d, 1d)
                         })
-                }
+                },
+                Epsilon = 0.000001D
             }
         };
     }

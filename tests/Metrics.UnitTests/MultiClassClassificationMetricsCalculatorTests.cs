@@ -17,7 +17,6 @@ namespace Byndyusoft.ML.Tools.Metrics.UnitTests
         }
 
         private IMultiClassClassificationMetricsCalculator _calculator = default!;
-        private readonly double _epsilon = 0.001D;
 
         [TestCaseSource(typeof(MultiClassClassificationMetricsCalculatorTestData),
             nameof(MultiClassClassificationMetricsCalculatorTestData.Cases))]
@@ -31,7 +30,7 @@ namespace Byndyusoft.ML.Tools.Metrics.UnitTests
 
             // Assert
             multiClassClassificationMetrics.Should().BeEquivalentTo(testData.ExpectedResult,
-                o => o.WithApproximateDoubleValues(_epsilon));
+                o => o.WithApproximateDoubleValues(testData.Epsilon));
         }
     }
 }

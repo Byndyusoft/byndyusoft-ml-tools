@@ -11,6 +11,8 @@ namespace Byndyusoft.ML.Tools.Metrics.UnitTests.TestsData.Metrics
 
         public MultiClassClassificationMetrics ExpectedResult { get; set; } = default!;
 
+        public double Epsilon { get; set; }
+
         public override string ToString() => Description;
 
         public static MultiClassClassificationMetricsCalculatorTestData[] Cases =
@@ -28,7 +30,8 @@ namespace Byndyusoft.ML.Tools.Metrics.UnitTests.TestsData.Metrics
                         new("4", new ClassificationMetrics(0.4D, 0.5D, 0.444D))
                     },
                     new ClassificationMetrics(0.619D, 0.591D, 0.605D),
-                    new ClassificationMetrics(0.621D, 0.625D, 0.601D))
+                    new ClassificationMetrics(0.621D, 0.625D, 0.601D)),
+                Epsilon = 0.001D
             }
         };
     }

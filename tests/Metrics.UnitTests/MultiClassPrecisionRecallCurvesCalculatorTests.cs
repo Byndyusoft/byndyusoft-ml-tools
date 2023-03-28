@@ -16,7 +16,6 @@ namespace Byndyusoft.ML.Tools.Metrics.UnitTests
         }
 
         private IMultiClassPrecisionRecallCurvesCalculator _calculator = default!;
-        private readonly double _epsilon = 0.000001D;
 
         [TestCaseSource(typeof(MultiClassPrecisionRecallCurvesCalculateTestData),
             nameof(MultiClassPrecisionRecallCurvesCalculateTestData.Cases))]
@@ -26,10 +25,10 @@ namespace Byndyusoft.ML.Tools.Metrics.UnitTests
             var result = _calculator.Calculate(data.Arguments);
 
             // Assert
-            result.MeanAveragePrecision.Should().BeApproximately(data.ExpectedMeanAveragePrecision, _epsilon);
+            result.MeanAveragePrecision.Should().BeApproximately(data.ExpectedMeanAveragePrecision, data.Epsilon);
             result.PrecisionRecallCurves.Should().BeEquivalentTo(
                 data.ExpectedPrecisionRecallCurves,
-                o => o.WithStrictOrdering().WithApproximateDoubleValues(_epsilon));
+                o => o.WithStrictOrdering().WithApproximateDoubleValues(data.Epsilon));
         }
     }
 }
