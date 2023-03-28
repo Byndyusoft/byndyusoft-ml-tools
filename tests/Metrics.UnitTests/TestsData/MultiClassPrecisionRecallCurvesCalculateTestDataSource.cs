@@ -2,9 +2,9 @@ using Byndyusoft.ML.Tools.Metrics.Dtos;
 
 namespace Byndyusoft.ML.Tools.Metrics.UnitTests.TestsData
 {
-    public static class CalculateTestDataSource
+    public static class MultiClassPrecisionRecallCurvesCalculateTestDataSource
     {
-        public static CalculateTestData[] CalculateCases =
+        public static MultiClassPrecisionRecallCurvesCalculateTestData[] CalculateCases =
         {
             new()
             {

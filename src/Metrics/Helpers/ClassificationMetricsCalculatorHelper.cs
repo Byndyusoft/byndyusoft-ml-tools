@@ -8,7 +8,7 @@ namespace Byndyusoft.ML.Tools.Metrics.Helpers
 {
     public static class ClassificationMetricsCalculatorHelper
     {
-        public static ClassificationMetrics Calculate(
+        public static OneClassClassificationMetrics Calculate(
             string classValue,
             ClassificationResult[] classificationResults)
         {
@@ -30,7 +30,8 @@ namespace Byndyusoft.ML.Tools.Metrics.Helpers
             var recall = CalculateRecall(truePositive, falseNegative);
             var f1Score = CalculateF1Score(precision, recall);
 
-            return new ClassificationMetrics(classValue, precision, recall, f1Score);
+            var classificationMetrics = new ClassificationMetrics(precision, recall, f1Score);
+            return new OneClassClassificationMetrics(classValue, classificationMetrics);
         }
 
         private static double? CalculatePrecision(int truePositiveCount, int falsePositiveCount)

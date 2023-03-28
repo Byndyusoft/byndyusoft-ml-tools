@@ -2,7 +2,7 @@ using Byndyusoft.ML.Tools.Metrics.Dtos;
 
 namespace Byndyusoft.ML.Tools.Metrics.UnitTests.TestsData
 {
-    public class CalculateTestData
+    public class MultiClassPrecisionRecallCurvesCalculateTestData
     {
         public ClassificationResultWithConfidence[] Arguments { get; set; } = null!;
 

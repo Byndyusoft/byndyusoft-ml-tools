@@ -17,8 +17,8 @@ namespace Byndyusoft.ML.Tools.Metrics.UnitTests
 
         private IMultiClassPrecisionRecallCurvesCalculator _calculator = default!;
 
-        [TestCaseSource(typeof(CalculateTestDataSource), nameof(CalculateTestDataSource.CalculateCases))]
-        public void TestCalculate_ReturnsExpectedResult(CalculateTestData data)
+        [TestCaseSource(typeof(MultiClassPrecisionRecallCurvesCalculateTestDataSource), nameof(MultiClassPrecisionRecallCurvesCalculateTestDataSource.CalculateCases))]
+        public void TestCalculate_ReturnsExpectedResult(MultiClassPrecisionRecallCurvesCalculateTestData data)
         {
             // Act
             var result = _calculator.Calculate(data.Arguments);
@@ -27,7 +27,7 @@ namespace Byndyusoft.ML.Tools.Metrics.UnitTests
             AssertResult(result, data);
         }
 
-        private void AssertResult(MultiClassPrecisionRecallCurveResult result, CalculateTestData testData)
+        private void AssertResult(MultiClassPrecisionRecallCurveResult result, MultiClassPrecisionRecallCurvesCalculateTestData testData)
         {
             const double epsilon = 0.000001d;
 
