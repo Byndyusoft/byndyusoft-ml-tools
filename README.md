@@ -39,7 +39,7 @@
         {
             var inputData = new ClassificationResult[]
             {
-                new(actualClass: "class1", predictedClass: "class1", confidence: 0.9d),
+                new(actualClass: "class1", predictedClass: "class1", confidence: 0.99d),
                 new(actualClass: "class1", predictedClass: "class1", confidence: 0.98d),
                 new(actualClass: "class1", predictedClass: null, confidence: 0.5d),
                 new(actualClass: "class2", predictedClass: "class2", confidence: 0.6d),
