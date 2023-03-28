@@ -41,8 +41,9 @@ namespace Byndyusoft.ML.Tools.Metrics
             T[] classificationResults)
             where T : ClassificationResult
         {
-            // TODO Реализовать расчет по ActualClass, если будет известна уверенность по нему, пока убираю
-            var classificationResultsByClass = classificationResults.ToDictionaryOfHashSets(i => i.ActualClass, i => i.PredictedClass);
+            // TODO Добавить уверенность по  ActualClass во входных данных, сейчас используется одна уверенность, это неправильно
+            var classificationResultsByClass = classificationResults
+                .ToDictionaryOfHashSets(i => i.ActualClass, i => i.PredictedClass);
 
             return classificationResultsByClass;
         }
