@@ -19,8 +19,8 @@ namespace Byndyusoft.ML.Tools.Metrics.UnitTests
         private IMultiClassClassificationMetricsCalculator _calculator = default!;
         private readonly double _epsilon = 0.001D;
 
-        [TestCaseSource(typeof(MultiClassClassificationMetricsCalculatorTestDataSource),
-            nameof(MultiClassClassificationMetricsCalculatorTestDataSource.Cases))]
+        [TestCaseSource(typeof(MultiClassClassificationMetricsCalculatorTestData),
+            nameof(MultiClassClassificationMetricsCalculatorTestData.Cases))]
         public void Calculate_ReturnsExpectedResult(MultiClassClassificationMetricsCalculatorTestData testData)
         {
             // Arrange

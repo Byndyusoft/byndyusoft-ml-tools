@@ -8,8 +8,8 @@ namespace Byndyusoft.ML.Tools.Metrics.UnitTests.Helpers
     [TestFixture]
     public class MultiClassConfusionMatrixValueCountsTests
     {
-        [TestCaseSource(typeof(MultiClassConfusionMatrixValueCountsGenerateTestDataSource),
-            nameof(MultiClassConfusionMatrixValueCountsGenerateTestDataSource.Cases))]
+        [TestCaseSource(typeof(MultiClassConfusionMatrixValueCountsGenerateTestData),
+            nameof(MultiClassConfusionMatrixValueCountsGenerateTestData.Cases))]
         public void Generate_ReturnsExpectedResult(MultiClassConfusionMatrixValueCountsGenerateTestData testData)
         {
             // Act
