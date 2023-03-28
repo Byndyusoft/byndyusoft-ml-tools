@@ -16,6 +16,9 @@ namespace Byndyusoft.ML.Tools.Metrics.Helpers
 
         public void AddCount(ConfusionMatrixValue confusionMatrixValue, int count = 1)
         {
+            if (count < 0)
+                throw new ArgumentException("Count must be non-negative", nameof(count));
+
             _countsByConfusionMatrixValue[confusionMatrixValue] += count;
         }
 

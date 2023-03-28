@@ -69,7 +69,7 @@ namespace Byndyusoft.ML.Tools.Metrics.Helpers
         private static double? GetAverage(ClassificationMetrics[] classificationResults,
             Func<ClassificationMetrics, double?> metricValueGetter)
         {
-            return classificationResults.Select(metricValueGetter).Average(i => i);
+            return classificationResults.Select(metricValueGetter).Average();
         }
     }
 }
