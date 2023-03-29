@@ -2,19 +2,9 @@
 
 # .NET ML Tools
 
-## Byndyusoft.ML.Tools.Metrics [![Nuget](https://img.shields.io/nuget/v/Byndyusoft.MaskedSerialization.svg)](https://www.nuget.org/packages/Byndyusoft.MaskedSerialization/) [![Downloads](https://img.shields.io/nuget/dt/Byndyusoft.MaskedSerialization.svg)](https://www.nuget.org/packages/Byndyusoft.MaskedSerialization/)
+## Byndyusoft.ML.Tools.Metrics [![Nuget](https://img.shields.io/nuget/v/Byndyusoft.ML.Tools.Metrics.svg)](https://www.nuget.org/packages/Byndyusoft.ML.Tools.Metrics/) [![Downloads](https://img.shields.io/nuget/dt/Byndyusoft.ML.Tools.Metrics.svg)](https://www.nuget.org/packages/Byndyusoft.ML.Tools.Metrics/)
 
 Библиотека для рассчёта метрик по результатам работы ML классификатора.
-
-Реализовано вычисление метрик precision-recall нескольких классов
-([IMultiClassPrecisionRecallCurvesCalculator](src/Metrics/Interfaces/IMultiClassPrecisionRecallCurvesCalculator.cs)).
-
-### Входные данные
-
-Входными данными для вычисления являются результаты классификации ([ClassificationResultWithConfidence](src/Metrics/Dtos/ClassificationResultWithConfidence.cs)):
-```csharp
-    var classificationResult = new ClassificationResultWithConfidence(actualClass: "class1", predictedClass: "class1", confidence: 0.9d);
-```
 
 ### Регистрация в DI
 
@@ -22,7 +12,18 @@
     services.AddMLMetricsCalculators();
 ```
 
-### Пример
+### Вычисление точек графика кривой precision-recall для многоклассовой классификации
+
+([IMultiClassPrecisionRecallCurvesCalculator](src/Metrics/Interfaces/IMultiClassPrecisionRecallCurvesCalculator.cs)).
+
+#### Входные данные
+
+Входными данными для вычисления являются результаты классификации ([ClassificationResultWithConfidence](src/Metrics/Dtos/ClassificationResultWithConfidence.cs)):
+```csharp
+    var classificationResult = new ClassificationResultWithConfidence(actualClass: "class1", predictedClass: "class1", confidence: 0.9d);
+```
+
+#### Пример
 
 Пример получения precision-recall curve метрик по нескольким классам (результат [MultiClassPrecisionRecallCurveResult](src/Metrics/Dtos/MultiClassPrecisionRecallCurveResult.cs)):
 ```csharp
