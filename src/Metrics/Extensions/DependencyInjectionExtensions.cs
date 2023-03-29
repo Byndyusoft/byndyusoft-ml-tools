@@ -10,6 +10,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IServiceCollection AddMLMetricsCalculators(this IServiceCollection services)
         {
             services.TryAddSingleton<IMultiClassPrecisionRecallCurvesCalculator, MultiClassPrecisionRecallCurvesCalculator>();
+            services.TryAddSingleton<IMultiClassClassificationMetricsCalculator, MultiClassClassificationMetricsCalculator>();
 
             return services;
         }
