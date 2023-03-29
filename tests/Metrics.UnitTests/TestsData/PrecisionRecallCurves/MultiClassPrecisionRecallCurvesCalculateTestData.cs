@@ -1,14 +1,23 @@
+using System;
 using Byndyusoft.ML.Tools.Metrics.Dtos;
 
-namespace Byndyusoft.ML.Tools.Metrics.UnitTests.TestsData
+namespace Byndyusoft.ML.Tools.Metrics.UnitTests.TestsData.PrecisionRecallCurves
 {
-    public static class CalculateTestDataSource
+    public class MultiClassPrecisionRecallCurvesCalculateTestData
     {
-        public static CalculateTestData[] CalculateCases =
+        public ClassificationResultWithConfidence[] Arguments { get; set; } = Array.Empty<ClassificationResultWithConfidence>();
+
+        public double ExpectedMeanAveragePrecision { get; set; }
+
+        public PrecisionRecallCurve[] ExpectedPrecisionRecallCurves { get; set; } = Array.Empty<PrecisionRecallCurve>();
+
+        public double Epsilon { get; set; }
+
+        public static MultiClassPrecisionRecallCurvesCalculateTestData[] Cases =
         {
             new()
             {
-                Input = new ClassificationResult[]
+                Arguments = new ClassificationResultWithConfidence[]
                 {
                     new("1", "1", 0.98d),
                     new("1", "1", 0.95d),
@@ -26,7 +35,6 @@ namespace Byndyusoft.ML.Tools.Metrics.UnitTests.TestsData
                     new("3", "2", 0.5d),
                 },
                 ExpectedMeanAveragePrecision = 0.62037037037037035d,
-                ExpectedWeightedAveragePrecision = 0.61904761904761907d,
                 ExpectedPrecisionRecallCurves = new PrecisionRecallCurve[]
                 {
                     new(
@@ -61,11 +69,12 @@ namespace Byndyusoft.ML.Tools.Metrics.UnitTests.TestsData
                             new(0d, 0.5d),
                             new(0d, 1d)
                         })
-                }
+                },
+                Epsilon = 0.000001D,
             },
             new()
             {
-                Input = new ClassificationResult[]
+                Arguments = new ClassificationResultWithConfidence[]
                 {
                     new("1", "1", 0.4d),
                     new("1", "1", 0.6d),
@@ -87,7 +96,6 @@ namespace Byndyusoft.ML.Tools.Metrics.UnitTests.TestsData
                     new("3", "2", 0.2d)
                 },
                 ExpectedMeanAveragePrecision = 0.51477324263038549d,
-                ExpectedWeightedAveragePrecision = 0.52473544973544972d,
                 ExpectedPrecisionRecallCurves = new PrecisionRecallCurve[]
                 {
                     new(
@@ -128,7 +136,8 @@ namespace Byndyusoft.ML.Tools.Metrics.UnitTests.TestsData
                             new(0d, 0.5d),
                             new(0d, 1d)
                         })
-                }
+                },
+                Epsilon = 0.000001D
             }
         };
     }

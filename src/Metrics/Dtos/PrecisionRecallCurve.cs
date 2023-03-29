@@ -2,7 +2,9 @@
 {
     public class PrecisionRecallCurve
     {
-        public PrecisionRecallCurve(string classValue, double averagePrecision,
+        public PrecisionRecallCurve(
+            string classValue, 
+            double averagePrecision,
             PrecisionRecallCurveDataPoint[] dataPoints)
         {
             ClassValue = classValue;
