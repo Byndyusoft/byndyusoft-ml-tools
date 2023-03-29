@@ -11,9 +11,9 @@
 
 ### Входные данные
 
-Входными данными для вычисления являются результаты классификации ([ClassificationResult](src/Metrics/Dtos/ClassificationResult.cs)):
+Входными данными для вычисления являются результаты классификации ([ClassificationResultWithConfidence](src/Metrics/Dtos/ClassificationResultWithConfidence.cs)):
 ```csharp
-    var classificationResult = new ClassificationResult(actualClass: "class1", predictedClass: "class1", confidence: 0.9d);
+    var classificationResult = new ClassificationResultWithConfidence(actualClass: "class1", predictedClass: "class1", confidence: 0.9d);
 ```
 
 ### Регистрация в DI
@@ -37,7 +37,7 @@
 
         public MultiClassPrecisionRecallCurveResult Calculate()
         {
-            var inputData = new ClassificationResult[]
+            var inputData = new ClassificationResultWithConfidence[]
             {
                 new(actualClass: "class1", predictedClass: "class1", confidence: 0.99d),
                 new(actualClass: "class1", predictedClass: "class1", confidence: 0.98d),
