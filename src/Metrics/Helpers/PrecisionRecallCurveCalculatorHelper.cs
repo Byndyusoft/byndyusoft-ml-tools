@@ -144,7 +144,7 @@ namespace Byndyusoft.ML.Tools.Metrics.Helpers
             PrecisionRecallCurveDataPoint[] precisionRecallCurvePoints,
             PrecisionRecallCurveSettings precisionRecallCurveSettings)
         {
-            if (precisionRecallCurveSettings.CurveShouldBeReduced())
+            if (precisionRecallCurveSettings.CurveDataPointsShouldBeReduced())
             {
                 var points = precisionRecallCurvePoints.Select(i => new Point(i.Precision, i.Recall)).ToArray();
                 var reducedPoints = DouglasPeuckerInterpolation.Interpolate(

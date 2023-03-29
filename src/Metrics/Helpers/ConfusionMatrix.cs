@@ -5,11 +5,11 @@ using Byndyusoft.ML.Tools.Metrics.Enums;
 
 namespace Byndyusoft.ML.Tools.Metrics.Helpers
 {
-    public class ConfusionMatrixValueCounts
+    public class ConfusionMatrix
     {
         private readonly Dictionary<ConfusionMatrixValue, int> _countsByConfusionMatrixValue;
 
-        public ConfusionMatrixValueCounts()
+        public ConfusionMatrix()
         {
             _countsByConfusionMatrixValue = Enum.GetValues<ConfusionMatrixValue>().ToDictionary(i => i, _ => 0);
         }

@@ -16,21 +16,21 @@ namespace Byndyusoft.ML.Tools.Metrics.UnitTests.Helpers
             Console.WriteLine(testData.Description);
 
             // Act
-            var multiClassConfusionMatrixValueCounts = MultiClassConfusionMatrixValueCounts.Generate(testData.Argument);
+            var multiClassConfusionMatrixValueCounts = MultiClassConfusionMatrices.Generate(testData.Argument);
 
             // Assert
             AssertMultiClassConfusionMatrixValueCounts(multiClassConfusionMatrixValueCounts, testData.ExpectedResult);
         }
 
         private static void AssertMultiClassConfusionMatrixValueCounts(
-            MultiClassConfusionMatrixValueCounts multiClassConfusionMatrixValueCounts, MultiClassConfusionMatrixValueCounts expectedResult)
+            MultiClassConfusionMatrices multiClassConfusionMatrices, MultiClassConfusionMatrices expectedResult)
         {
-            multiClassConfusionMatrixValueCounts.Enumerate().Should().BeEquivalentTo(
+            multiClassConfusionMatrices.Enumerate().Should().BeEquivalentTo(
                 expectedResult.Enumerate(),
                 o => o
-                    .Using<ConfusionMatrixValueCounts>(ctx =>
+                    .Using<ConfusionMatrix>(ctx =>
                         ctx.Subject.Enumerate().Should().BeEquivalentTo(ctx.Expectation.Enumerate()))
-                    .WhenTypeIs<ConfusionMatrixValueCounts>());
+                    .WhenTypeIs<ConfusionMatrix>());
         }
     }
 }

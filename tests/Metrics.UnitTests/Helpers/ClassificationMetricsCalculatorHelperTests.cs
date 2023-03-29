@@ -12,12 +12,12 @@ namespace Byndyusoft.ML.Tools.Metrics.UnitTests.Helpers
     {
         [TestCaseSource(typeof(ClassificationMetricsCalculatorHelperCalculateTestData),
             nameof(ClassificationMetricsCalculatorHelperCalculateTestData.CalculateTestDataCases))]
-        public void Calculate_ReturnsExpectedResult(ClassificationMetricsCalculatorHelperCalculateTestData testData)
+        public void CalculateClassificationMetrics_ReturnsExpectedResult(ClassificationMetricsCalculatorHelperCalculateTestData testData)
         {
             Console.WriteLine(testData.Description);
 
             // Act
-            var classificationMetrics = ClassificationMetricsCalculatorHelper.Calculate(testData.Argument);
+            var classificationMetrics = ClassificationMetricsCalculatorHelper.CalculateClassificationMetrics(testData.Argument);
 
             // Assert
             classificationMetrics.Should()

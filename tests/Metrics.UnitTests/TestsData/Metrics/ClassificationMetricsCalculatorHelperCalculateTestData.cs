@@ -9,7 +9,7 @@ namespace Byndyusoft.ML.Tools.Metrics.UnitTests.TestsData.Metrics
     {
         public string Description { get; set; } = default!;
 
-        public ConfusionMatrixValueCounts Argument { get; set; } = default!;
+        public ConfusionMatrix Argument { get; set; } = default!;
 
         public ClassificationMetrics ExpectedResult { get; set; } = default!;
 
@@ -30,7 +30,7 @@ namespace Byndyusoft.ML.Tools.Metrics.UnitTests.TestsData.Metrics
 
         private static ClassificationMetricsCalculatorHelperCalculateTestData GetCalculateTestDataCase_SampleMetric()
         {
-            var argument = new ConfusionMatrixValueCounts();
+            var argument = new ConfusionMatrix();
             argument.AddCount(ConfusionMatrixValue.TruePositive, 4);
             argument.AddCount(ConfusionMatrixValue.FalsePositive, 2);
             argument.AddCount(ConfusionMatrixValue.FalseNegative, 3);
@@ -47,7 +47,7 @@ namespace Byndyusoft.ML.Tools.Metrics.UnitTests.TestsData.Metrics
 
         private static ClassificationMetricsCalculatorHelperCalculateTestData GetCalculateTestDataCase_PrecisionIsNotCalculated()
         {
-            var argument = new ConfusionMatrixValueCounts();
+            var argument = new ConfusionMatrix();
             argument.AddCount(ConfusionMatrixValue.TruePositive, 0);
             argument.AddCount(ConfusionMatrixValue.FalsePositive, 0);
             argument.AddCount(ConfusionMatrixValue.FalseNegative, 3);
@@ -64,7 +64,7 @@ namespace Byndyusoft.ML.Tools.Metrics.UnitTests.TestsData.Metrics
 
         private static ClassificationMetricsCalculatorHelperCalculateTestData GetCalculateTestDataCase_RecallIsNotCalculated()
         {
-            var argument = new ConfusionMatrixValueCounts();
+            var argument = new ConfusionMatrix();
             argument.AddCount(ConfusionMatrixValue.TruePositive, 0);
             argument.AddCount(ConfusionMatrixValue.FalsePositive, 2);
             argument.AddCount(ConfusionMatrixValue.FalseNegative, 0);
@@ -81,7 +81,7 @@ namespace Byndyusoft.ML.Tools.Metrics.UnitTests.TestsData.Metrics
 
         private static ClassificationMetricsCalculatorHelperCalculateTestData GetCalculateTestDataCase_PrecisionAndRecallAreNotCalculated()
         {
-            var argument = new ConfusionMatrixValueCounts();
+            var argument = new ConfusionMatrix();
             argument.AddCount(ConfusionMatrixValue.TruePositive, 0);
             argument.AddCount(ConfusionMatrixValue.FalsePositive, 0);
             argument.AddCount(ConfusionMatrixValue.FalseNegative, 0);

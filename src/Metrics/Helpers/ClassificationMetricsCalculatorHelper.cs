@@ -7,21 +7,21 @@ namespace Byndyusoft.ML.Tools.Metrics.Helpers
 {
     public static class ClassificationMetricsCalculatorHelper
     {
-        public static ClassificationMetrics Calculate(
-            ConfusionMatrixValueCounts confusionMatrixValueCounts)
+        public static ClassificationMetrics CalculateClassificationMetrics(
+            ConfusionMatrix confusionMatrix)
         {
-            var precision = CalculatePrecision(confusionMatrixValueCounts);
-            var recall = CalculateRecall(confusionMatrixValueCounts);
-            var f1Score = CalculateF1Score(confusionMatrixValueCounts);
+            var precision = CalculatePrecision(confusionMatrix);
+            var recall = CalculateRecall(confusionMatrix);
+            var f1Score = CalculateF1Score(confusionMatrix);
 
             return new ClassificationMetrics(precision, recall, f1Score);
         }
 
         public static ClassificationMetrics CalculateMicroMetrics(
-            MultiClassConfusionMatrixValueCounts multiClassConfusionMatrixValueCounts)
+            MultiClassConfusionMatrices multiClassConfusionMatrices)
         {
-            var totalConfusionMatrixValueCounts = multiClassConfusionMatrixValueCounts.GetTotalCounts();
-            return Calculate(totalConfusionMatrixValueCounts);
+            var totalConfusionMatrixValueCounts = multiClassConfusionMatrices.GetTotalConfusionMatrix();
+            return CalculateClassificationMetrics(totalConfusionMatrixValueCounts);
         }
 
         public static ClassificationMetrics CalculateMacroMetrics(ClassificationMetrics[] classificationMetricsByClass)
@@ -33,37 +33,37 @@ namespace Byndyusoft.ML.Tools.Metrics.Helpers
             return new ClassificationMetrics(precision, recall, f1Score);
         }
 
-        private static double? CalculatePrecision(ConfusionMatrixValueCounts confusionMatrixValueCounts)
+        private static double? CalculatePrecision(ConfusionMatrix confusionMatrix)
         {
-            var truePositiveCount = confusionMatrixValueCounts.GetCount(ConfusionMatrixValue.TruePositive);
-            var sum = truePositiveCount + confusionMatrixValueCounts.GetCount(ConfusionMatrixValue.FalsePositive);
-            if (sum == 0)
+            var truePositiveCount = confusionMatrix.GetCount(ConfusionMatrixValue.TruePositive);
+            var divisor = truePositiveCount + confusionMatrix.GetCount(ConfusionMatrixValue.FalsePositive);
+            if (divisor == 0)
                 return null;
 
-            return (double)truePositiveCount / sum;
+            return (double)truePositiveCount / divisor;
         }
 
-        private static double? CalculateRecall(ConfusionMatrixValueCounts confusionMatrixValueCounts)
+        private static double? CalculateRecall(ConfusionMatrix confusionMatrix)
         {
-            var truePositiveCount = confusionMatrixValueCounts.GetCount(ConfusionMatrixValue.TruePositive);
-            var sum = truePositiveCount + confusionMatrixValueCounts.GetCount(ConfusionMatrixValue.FalseNegative);
-            if (sum == 0)
+            var truePositiveCount = confusionMatrix.GetCount(ConfusionMatrixValue.TruePositive);
+            var divisor = truePositiveCount + confusionMatrix.GetCount(ConfusionMatrixValue.FalseNegative);
+            if (divisor == 0)
                 return null;
 
-            return (double)truePositiveCount / sum;
+            return (double)truePositiveCount / divisor;
         }
 
-        private static double? CalculateF1Score(ConfusionMatrixValueCounts confusionMatrixValueCounts)
+        private static double? CalculateF1Score(ConfusionMatrix confusionMatrix)
         {
-            var truePositiveCount = confusionMatrixValueCounts.GetCount(ConfusionMatrixValue.TruePositive);
-            var doubledDivisor = 2 * truePositiveCount +
-                                 confusionMatrixValueCounts.GetCount(ConfusionMatrixValue.FalsePositive) +
-                                 confusionMatrixValueCounts.GetCount(ConfusionMatrixValue.FalseNegative);
+            var truePositiveCount = confusionMatrix.GetCount(ConfusionMatrixValue.TruePositive);
+            var divisor = 2 * truePositiveCount +
+                          confusionMatrix.GetCount(ConfusionMatrixValue.FalsePositive) +
+                          confusionMatrix.GetCount(ConfusionMatrixValue.FalseNegative);
 
-            if (doubledDivisor == 0)
+            if (divisor == 0)
                 return null;
 
-            return truePositiveCount * 2D / doubledDivisor;
+            return truePositiveCount * 2D / divisor;
         }
 
         private static double? GetAverage(ClassificationMetrics[] classificationResults,

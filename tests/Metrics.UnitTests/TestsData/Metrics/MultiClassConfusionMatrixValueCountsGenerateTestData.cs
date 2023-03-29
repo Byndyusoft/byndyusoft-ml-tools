@@ -12,7 +12,7 @@ namespace Byndyusoft.ML.Tools.Metrics.UnitTests.TestsData.Metrics
 
         public ClassificationResult[] Argument { get; set; } = Array.Empty<ClassificationResult>();
 
-        public MultiClassConfusionMatrixValueCounts ExpectedResult { get; set; } = default!;
+        public MultiClassConfusionMatrices ExpectedResult { get; set; } = default!;
 
         public override string ToString()
         {
@@ -28,7 +28,7 @@ namespace Byndyusoft.ML.Tools.Metrics.UnitTests.TestsData.Metrics
         {
             var argument = ClassificationResultGenerator.GetForMetricSample();
 
-            var expectedCounts = new MultiClassConfusionMatrixValueCounts();
+            var expectedCounts = new MultiClassConfusionMatrices();
 
             expectedCounts.AddCount("1", ConfusionMatrixValue.TruePositive, 4);
             expectedCounts.AddCount("1", ConfusionMatrixValue.FalsePositive, 2);

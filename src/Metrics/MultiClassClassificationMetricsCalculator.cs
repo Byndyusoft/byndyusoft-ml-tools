@@ -10,20 +10,20 @@ namespace Byndyusoft.ML.Tools.Metrics
     {
         public MultiClassClassificationMetrics Calculate(ClassificationResult[] classificationResults)
         {
-            var multiClassConfusionMatrixValueCounts = MultiClassConfusionMatrixValueCounts.Generate(classificationResults);
+            var multiClassConfusionMatrices = MultiClassConfusionMatrices.Generate(classificationResults);
 
             var oneClassClassificationMetricsList = new List<OneClassClassificationMetrics>();
 
-            foreach (var (classValue, confusionMatrixValueCounts) in multiClassConfusionMatrixValueCounts.Enumerate())
+            foreach (var (@class, confusionMatrix) in multiClassConfusionMatrices.Enumerate())
             {
-                var classificationMetrics = ClassificationMetricsCalculatorHelper.Calculate(confusionMatrixValueCounts);
-                var oneClassClassificationMetrics = new OneClassClassificationMetrics(classValue, classificationMetrics);
+                var classificationMetrics = ClassificationMetricsCalculatorHelper.CalculateClassificationMetrics(confusionMatrix);
+                var oneClassClassificationMetrics = new OneClassClassificationMetrics(@class, classificationMetrics);
                 oneClassClassificationMetricsList.Add(oneClassClassificationMetrics);
             }
 
             var macroMetrics = ClassificationMetricsCalculatorHelper.CalculateMacroMetrics(
                 oneClassClassificationMetricsList.Select(i => i.ClassificationMetrics).ToArray());
-            var microMetrics = ClassificationMetricsCalculatorHelper.CalculateMicroMetrics(multiClassConfusionMatrixValueCounts);
+            var microMetrics = ClassificationMetricsCalculatorHelper.CalculateMicroMetrics(multiClassConfusionMatrices);
 
 
             return new MultiClassClassificationMetrics(oneClassClassificationMetricsList.ToArray(), microMetrics, macroMetrics);

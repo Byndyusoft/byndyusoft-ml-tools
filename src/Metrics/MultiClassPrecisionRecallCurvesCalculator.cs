@@ -14,9 +14,9 @@ namespace Byndyusoft.ML.Tools.Metrics
             ClassificationResultWithConfidence[] classificationResults,
             PrecisionRecallCurveSettings? precisionRecallCurveSettings)
         {
-            precisionRecallCurveSettings ??= PrecisionRecallCurveSettings.Default();
+            precisionRecallCurveSettings ??= PrecisionRecallCurveSettings.DefaultWithoutCurveDataPointReducing();
 
-            var classificationResultsByClass = GenerateClassResultsDictionary(classificationResults);
+            var classificationResultsByClass = GenerateClassificationResultsByClassDictionary(classificationResults);
 
             var precisionRecallCurves = new List<PrecisionRecallCurve>();
 
@@ -37,7 +37,7 @@ namespace Byndyusoft.ML.Tools.Metrics
             return new MultiClassPrecisionRecallCurveResult(precisionRecallCurves);
         }
 
-        private static IDictionary<string, HashSet<T>> GenerateClassResultsDictionary<T>(
+        private static IDictionary<string, HashSet<T>> GenerateClassificationResultsByClassDictionary<T>(
             T[] classificationResults)
             where T : ClassificationResult
         {

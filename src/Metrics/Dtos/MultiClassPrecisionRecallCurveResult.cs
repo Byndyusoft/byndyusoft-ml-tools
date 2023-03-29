@@ -3,6 +3,7 @@ using System.Linq;
 
 namespace Byndyusoft.ML.Tools.Metrics.Dtos
 {
+    // TODO Rename MultiClassClassificationPrecisionRecallCurveCalculationResult
     public class MultiClassPrecisionRecallCurveResult
     {
         public MultiClassPrecisionRecallCurveResult(

@@ -6,13 +6,13 @@ using Byndyusoft.ML.Tools.Metrics.Extensions;
 
 namespace Byndyusoft.ML.Tools.Metrics.Helpers
 {
-    public class MultiClassConfusionMatrixValueCounts
+    public class MultiClassConfusionMatrices
     {
-        private readonly Dictionary<string, ConfusionMatrixValueCounts> _countsByClass = new();
+        private readonly Dictionary<string, ConfusionMatrix> _countsByClass = new();
 
-        public static MultiClassConfusionMatrixValueCounts Generate(ClassificationResult[] classificationResults)
+        public static MultiClassConfusionMatrices Generate(ClassificationResult[] classificationResults)
         {
-            var multiClassConfusionMatrixValueCounts = new MultiClassConfusionMatrixValueCounts();
+            var multiClassConfusionMatrixValueCounts = new MultiClassConfusionMatrices();
 
             void Add(ClassificationResult classificationResult, string? @class)
             {
@@ -45,23 +45,23 @@ namespace Byndyusoft.ML.Tools.Metrics.Helpers
         {
             if (_countsByClass.TryGetValue(@class, out var confusionMatrixValueCounts) == false)
             {
-                confusionMatrixValueCounts = new ConfusionMatrixValueCounts();
+                confusionMatrixValueCounts = new ConfusionMatrix();
                 _countsByClass.Add(@class, confusionMatrixValueCounts);
             }
 
             confusionMatrixValueCounts.AddCount(confusionMatrixValue, count);
         }
 
-        public IEnumerable<(string Class, ConfusionMatrixValueCounts ConfusionMatrixValueCounts)> Enumerate()
+        public IEnumerable<(string Class, ConfusionMatrix ConfusionMatrix)> Enumerate()
         {
             return _countsByClass
                 .OrderBy(i => i.Key)
                 .Select(i => (i.Key, i.Value));
         }
 
-        public ConfusionMatrixValueCounts GetTotalCounts()
+        public ConfusionMatrix GetTotalConfusionMatrix()
         {
-            var confusionMatrixValueCounts = new ConfusionMatrixValueCounts();
+            var confusionMatrixValueCounts = new ConfusionMatrix();
             foreach (var (confusionMatrixValue, count) in _countsByClass.Values.SelectMany(i => i.Enumerate()))
             {
                 confusionMatrixValueCounts.AddCount(confusionMatrixValue, count);
