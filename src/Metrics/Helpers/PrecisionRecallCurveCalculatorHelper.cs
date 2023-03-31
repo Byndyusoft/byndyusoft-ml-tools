@@ -10,9 +10,7 @@ namespace Byndyusoft.ML.Tools.Metrics.Helpers
 {
     public static class PrecisionRecallCurveCalculatorHelper
     {
-        // TODO Comment
-        // TODO Test
-        public static PrecisionRecallCurve Calculate(
+        public static PrecisionRecallCurve? Calculate(
             string classValue, 
             ClassificationResultWithConfidence[] classificationResults,
             PrecisionRecallCurveSettings precisionRecallCurveSettings)
@@ -49,17 +47,24 @@ namespace Byndyusoft.ML.Tools.Metrics.Helpers
                 }
             }
 
-            var recallValues = new double[classificationResults.Length];
-            var precisionValues = new double[classificationResults.Length];
+            var recallValues = new List<double>(classificationResults.Length);
+            var precisionValues = new List<double>(classificationResults.Length);
 
             for (var i = 0; i < classificationResults.Length; i++)
             {
-                precisionValues[i] = SafeDivideOrDefault(truePositives[i], truePositives[i] + falsePositives[i], 1D);
-                recallValues[i] = SafeDivideOrDefault(truePositives[i], totalActualClassElements, 0D);
+                if (TryDivide(truePositives[i], truePositives[i] + falsePositives[i], out var precision) &&
+                    TryDivide(truePositives[i], totalActualClassElements, out var recall))
+                {
+                    precisionValues.Add(precision);
+                    recallValues.Add(recall);
+                }
             }
 
+            if (precisionValues.Any() == false)
+                return null;
+
             var precisionRecallCurvePoints =
-                CalculateInterpolatedPrecisionRecallCurveDataPoints(precisionValues, recallValues);
+                CalculatePrecisionRecallCurveDataPoints(precisionValues, recallValues);
 
             var averagePrecision = CalculateAveragePrecision(precisionRecallCurvePoints);
 
@@ -71,12 +76,15 @@ namespace Byndyusoft.ML.Tools.Metrics.Helpers
                 precisionRecallCurvePoints);
         }
 
-        private static double SafeDivideOrDefault(int dividend, int divisor, double defaultValue)
+        private static bool TryDivide(int dividend, int divisor, out double result)
         {
-            if (divisor == 0)
-                return defaultValue;
+            result = default;
 
-            return (double)dividend / divisor;
+            if (divisor == 0)
+                return false;
+
+            result = (double)dividend / divisor;
+            return true;
         }
 
         private static double CalculateAveragePrecision(PrecisionRecallCurveDataPoint[] precisionRecallCurvePoints)
@@ -99,15 +107,15 @@ namespace Byndyusoft.ML.Tools.Metrics.Helpers
             return trapezoidArea;
         }
 
-        private static PrecisionRecallCurveDataPoint[] CalculateInterpolatedPrecisionRecallCurveDataPoints(
-            double[] precisionValues,
-            double[] recallValues)
+        private static PrecisionRecallCurveDataPoint[] CalculatePrecisionRecallCurveDataPoints(
+            List<double> precisionValues,
+            List<double> recallValues)
         {
-            if (precisionValues.Length != recallValues.Length)
+            if (precisionValues.Count != recallValues.Count)
                 throw new ArgumentException(
                     $"Arrays ({nameof(precisionValues)}, {nameof(recallValues)}) must have same size.");
 
-            var resultDataPoints = new List<PrecisionRecallCurveDataPoint>(precisionValues.Length + 2);
+            var resultDataPoints = new List<PrecisionRecallCurveDataPoint>(precisionValues.Count + 2);
 
             var previousDataPoint = new PrecisionRecallCurveDataPoint(1D, 0D);
             resultDataPoints.Add(previousDataPoint);
@@ -124,7 +132,7 @@ namespace Byndyusoft.ML.Tools.Metrics.Helpers
                 resultDataPoints.Add(previousDataPoint);
             }
 
-            for (var index = 0; index < precisionValues.Length; ++index)
+            for (var index = 0; index < precisionValues.Count; ++index)
             {
                 var precision = precisionValues[index];
                 var recall = recallValues[index];

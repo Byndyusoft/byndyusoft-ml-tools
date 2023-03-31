@@ -31,7 +31,8 @@ namespace Byndyusoft.ML.Tools.Metrics
                     classificationResultsOfTheClass.ToArray(),
                     precisionRecallCurveSettings);
 
-                precisionRecallCurves.Add(precisionRecallCurve);
+                if (precisionRecallCurve != null)
+                    precisionRecallCurves.Add(precisionRecallCurve);
             }
 
             return new MultiClassPrecisionRecallCurveResult(precisionRecallCurves);
