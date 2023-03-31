@@ -17,29 +17,31 @@ namespace Byndyusoft.ML.Tools.Metrics.Helpers
             ClassificationResultWithConfidence[] classificationResults,
             PrecisionRecallCurveSettings precisionRecallCurveSettings)
         {
+            // Сортируем по коэффициентам уверенности. Рассчитываем точки графика по порогам, соответствующим этим коэффициентам
             classificationResults = classificationResults.OrderByDescending(i => i.Confidence).ToArray();
 
-            var cumulativeFalsePositives = new int[classificationResults.Length];
-            var cumulativeTruePositives = new int[classificationResults.Length];
-            var recallValues = new double[classificationResults.Length];
-            var precisionValues = new double[classificationResults.Length];
+            // Рассчитываем TP и FP для каждого порога
+            var falsePositives = new int[classificationResults.Length];
+            var truePositives = new int[classificationResults.Length];
 
+            // Количество TP + FN, оно является инвариантным для каждого порога (количество образцов, входящих в этот класс)
             var totalActualClassElements = 0;
 
             for (var i = 0; i < classificationResults.Length; i++)
             {
-                cumulativeTruePositives[i] = i == 0 ? 0 : cumulativeTruePositives[i - 1];
-                cumulativeFalsePositives[i] = i == 0 ? 0 : cumulativeFalsePositives[i - 1];
+                // TP и FP рассчитываются кумулятивно, т.к. чем ниже порог, тем их становится не меньше
+                truePositives[i] = i == 0 ? 0 : truePositives[i - 1];
+                falsePositives[i] = i == 0 ? 0 : falsePositives[i - 1];
 
                 var confusionMatrixValue = classificationResults[i].CalculateConfusionMatrixValue(classValue);
                 switch (confusionMatrixValue)
                 {
                     case ConfusionMatrixValue.TruePositive:
-                        ++cumulativeTruePositives[i];
+                        ++truePositives[i];
                         ++totalActualClassElements;
                         break;
                     case ConfusionMatrixValue.FalsePositive:
-                        ++cumulativeFalsePositives[i];
+                        ++falsePositives[i];
                         break;
                     case ConfusionMatrixValue.FalseNegative:
                         ++totalActualClassElements;
@@ -47,10 +49,13 @@ namespace Byndyusoft.ML.Tools.Metrics.Helpers
                 }
             }
 
+            var recallValues = new double[classificationResults.Length];
+            var precisionValues = new double[classificationResults.Length];
+
             for (var i = 0; i < classificationResults.Length; i++)
             {
-                precisionValues[i] = SafeDivideOrDefault(cumulativeTruePositives[i], cumulativeTruePositives[i] + cumulativeFalsePositives[i], 1D);
-                recallValues[i] = SafeDivideOrDefault(cumulativeTruePositives[i], totalActualClassElements, 0D);
+                precisionValues[i] = SafeDivideOrDefault(truePositives[i], truePositives[i] + falsePositives[i], 1D);
+                recallValues[i] = SafeDivideOrDefault(truePositives[i], totalActualClassElements, 0D);
             }
 
             var precisionRecallCurvePoints =
@@ -102,32 +107,32 @@ namespace Byndyusoft.ML.Tools.Metrics.Helpers
                 throw new ArgumentException(
                     $"Arrays ({nameof(precisionValues)}, {nameof(recallValues)}) must have same size.");
 
-            var orderedIndices = recallValues
-                .Select((recall, index) => (Recall: recall, Index: index))
-                .OrderBy(i => i.Recall)
-                .ThenBy(i => i.Index)
-                .Select(i => i.Index)
-                .ToArray();
-
             var resultDataPoints = new List<PrecisionRecallCurveDataPoint>(precisionValues.Length + 2);
 
             var previousDataPoint = new PrecisionRecallCurveDataPoint(1D, 0D);
             resultDataPoints.Add(previousDataPoint);
 
-            foreach (var index in orderedIndices)
+            void AddDataPointIfNotEqualToPrevious(double precision, double recall)
             {
-                var precision = precisionValues[index];
-                var recall = recallValues[index];
-
                 if (AreEqual(precision, previousDataPoint.Precision) &&
                     AreEqual(recall, previousDataPoint.Recall))
                 {
-                    continue;
+                    return;
                 }
 
                 previousDataPoint = new PrecisionRecallCurveDataPoint(precision, recall);
                 resultDataPoints.Add(previousDataPoint);
             }
+
+            for (var index = 0; index < precisionValues.Length; ++index)
+            {
+                var precision = precisionValues[index];
+                var recall = recallValues[index];
+
+                AddDataPointIfNotEqualToPrevious(precision, recall);
+            }
+
+            AddDataPointIfNotEqualToPrevious(0D, 1D);
 
             return resultDataPoints.ToArray();
         }
