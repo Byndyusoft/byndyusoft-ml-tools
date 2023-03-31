@@ -53,8 +53,8 @@ namespace Byndyusoft.ML.Tools.Metrics.Helpers
                     start.Y + vectorAB.Y * pointCCoefficient) // C is between A and B => D = C, ck * AB = AC
             };
 
-            var vPC = new VectorStruct(point, pointD);
-            return vPC.GetLength();
+            var vPD = new VectorStruct(point, pointD);
+            return vPD.GetLength();
         }
 
         /// <summary>
