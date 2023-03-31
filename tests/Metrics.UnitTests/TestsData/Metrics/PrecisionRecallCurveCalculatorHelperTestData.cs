@@ -12,7 +12,7 @@ namespace Byndyusoft.ML.Tools.Metrics.UnitTests.TestsData.Metrics
 
         public string ClassValueArgument { get; set; } = string.Empty;
 
-        public PrecisionRecallCurve ExpectedResult { get; set; } = default!;
+        public PrecisionRecallCurve? ExpectedResult { get; set; }
 
         public double Epsilon { get; set; }
 
@@ -24,6 +24,8 @@ namespace Byndyusoft.ML.Tools.Metrics.UnitTests.TestsData.Metrics
         public static IEnumerable<PrecisionRecallCurveCalculatorHelperTestData> CalculateTestDataCases()
         {
             yield return GetCalculateTestDataCase_SampleMetric();
+            yield return GetCalculateTestDataCase_PrecisionIsNull();
+            yield return GetCalculateTestDataCase_RecallIsNull();
         }
 
         private static PrecisionRecallCurveCalculatorHelperTestData GetCalculateTestDataCase_SampleMetric()
@@ -52,6 +54,40 @@ namespace Byndyusoft.ML.Tools.Metrics.UnitTests.TestsData.Metrics
                 ClassificationResultsArgument = classificationResultsWithConfidence,
                 ClassValueArgument = "1",
                 ExpectedResult = expectedPrecisionRecallCurve,
+                Epsilon = 0.01D
+            };
+        }
+
+        private static PrecisionRecallCurveCalculatorHelperTestData GetCalculateTestDataCase_PrecisionIsNull()
+        {
+            var classificationResultsWithConfidence = new ClassificationResultWithConfidence[]
+            {
+                new("1", "2", 0.5D)
+            };
+
+            return new PrecisionRecallCurveCalculatorHelperTestData
+            {
+                Description = "Precision is null",
+                ClassificationResultsArgument = classificationResultsWithConfidence,
+                ClassValueArgument = "1",
+                ExpectedResult = null,
+                Epsilon = 0.01D
+            };
+        }
+
+        private static PrecisionRecallCurveCalculatorHelperTestData GetCalculateTestDataCase_RecallIsNull()
+        {
+            var classificationResultsWithConfidence = new ClassificationResultWithConfidence[]
+            {
+                new("2", "1", 0.5D)
+            };
+
+            return new PrecisionRecallCurveCalculatorHelperTestData
+            {
+                Description = "Recall is null",
+                ClassificationResultsArgument = classificationResultsWithConfidence,
+                ClassValueArgument = "1",
+                ExpectedResult = null,
                 Epsilon = 0.01D
             };
         }
