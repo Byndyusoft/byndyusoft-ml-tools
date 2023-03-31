@@ -67,7 +67,7 @@ namespace Byndyusoft.ML.Tools.Metrics.UnitTests.TestsData.Metrics
 
             return new PrecisionRecallCurveCalculatorHelperTestData
             {
-                Description = "Precision is null",
+                Description = "Precision is null. Curve cannot be calculated.",
                 ClassificationResultsArgument = classificationResultsWithConfidence,
                 ClassValueArgument = "1",
                 ExpectedResult = null,
@@ -84,7 +84,7 @@ namespace Byndyusoft.ML.Tools.Metrics.UnitTests.TestsData.Metrics
 
             return new PrecisionRecallCurveCalculatorHelperTestData
             {
-                Description = "Recall is null",
+                Description = "Recall is null. Curve cannot be calculated.",
                 ClassificationResultsArgument = classificationResultsWithConfidence,
                 ClassValueArgument = "1",
                 ExpectedResult = null,
