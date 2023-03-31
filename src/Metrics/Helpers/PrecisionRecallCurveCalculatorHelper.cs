@@ -10,6 +10,8 @@ namespace Byndyusoft.ML.Tools.Metrics.Helpers
 {
     public static class PrecisionRecallCurveCalculatorHelper
     {
+        // TODO Comment
+        // TODO Test
         public static PrecisionRecallCurve Calculate(
             string classValue, 
             ClassificationResultWithConfidence[] classificationResults,
@@ -17,8 +19,8 @@ namespace Byndyusoft.ML.Tools.Metrics.Helpers
         {
             classificationResults = classificationResults.OrderByDescending(i => i.Confidence).ToArray();
 
-            var falsePositives = new int[classificationResults.Length];
-            var truePositives = new int[classificationResults.Length];
+            var cumulativeFalsePositives = new int[classificationResults.Length];
+            var cumulativeTruePositives = new int[classificationResults.Length];
             var recallValues = new double[classificationResults.Length];
             var precisionValues = new double[classificationResults.Length];
 
@@ -26,18 +28,18 @@ namespace Byndyusoft.ML.Tools.Metrics.Helpers
 
             for (var i = 0; i < classificationResults.Length; i++)
             {
-                truePositives[i] = i == 0 ? 0 : truePositives[i - 1];
-                falsePositives[i] = i == 0 ? 0 : falsePositives[i - 1];
+                cumulativeTruePositives[i] = i == 0 ? 0 : cumulativeTruePositives[i - 1];
+                cumulativeFalsePositives[i] = i == 0 ? 0 : cumulativeFalsePositives[i - 1];
 
                 var confusionMatrixValue = classificationResults[i].CalculateConfusionMatrixValue(classValue);
                 switch (confusionMatrixValue)
                 {
                     case ConfusionMatrixValue.TruePositive:
-                        ++truePositives[i];
+                        ++cumulativeTruePositives[i];
                         ++totalActualClassElements;
                         break;
                     case ConfusionMatrixValue.FalsePositive:
-                        ++falsePositives[i];
+                        ++cumulativeFalsePositives[i];
                         break;
                     case ConfusionMatrixValue.FalseNegative:
                         ++totalActualClassElements;
@@ -47,8 +49,8 @@ namespace Byndyusoft.ML.Tools.Metrics.Helpers
 
             for (var i = 0; i < classificationResults.Length; i++)
             {
-                precisionValues[i] = SafeDivideOrOne(truePositives[i], truePositives[i] + falsePositives[i]);
-                recallValues[i] = SafeDivideOrOne(truePositives[i], totalActualClassElements);
+                precisionValues[i] = SafeDivideOrDefault(cumulativeTruePositives[i], cumulativeTruePositives[i] + cumulativeFalsePositives[i], 1D);
+                recallValues[i] = SafeDivideOrDefault(cumulativeTruePositives[i], totalActualClassElements, 0D);
             }
 
             var precisionRecallCurvePoints =
@@ -64,10 +66,10 @@ namespace Byndyusoft.ML.Tools.Metrics.Helpers
                 precisionRecallCurvePoints);
         }
 
-        private static double SafeDivideOrOne(int dividend, int divisor)
+        private static double SafeDivideOrDefault(int dividend, int divisor, double defaultValue)
         {
             if (divisor == 0)
-                return 0;
+                return defaultValue;
 
             return (double)dividend / divisor;
         }
@@ -78,8 +80,18 @@ namespace Byndyusoft.ML.Tools.Metrics.Helpers
                 ParallelEnumerable
                     .Range(1, precisionRecallCurvePoints.Length - 1)
                     .Sum(index =>
-                        precisionRecallCurvePoints[index].Precision *
-                        (precisionRecallCurvePoints[index].Recall - precisionRecallCurvePoints[index - 1].Recall));
+                        CalculateAreaUnderSegment(
+                            precisionRecallCurvePoints[index],
+                            precisionRecallCurvePoints[index - 1]));
+        }
+
+        private static double CalculateAreaUnderSegment(PrecisionRecallCurveDataPoint currentDataPoint, PrecisionRecallCurveDataPoint previousDataPoint)
+        {
+            var basesHalfSum = (currentDataPoint.Precision + previousDataPoint.Precision) / 2D;
+            var height = currentDataPoint.Recall - previousDataPoint.Recall;
+            var trapezoidArea = basesHalfSum * height;
+
+            return trapezoidArea;
         }
 
         private static PrecisionRecallCurveDataPoint[] CalculateInterpolatedPrecisionRecallCurveDataPoints(
@@ -90,49 +102,34 @@ namespace Byndyusoft.ML.Tools.Metrics.Helpers
                 throw new ArgumentException(
                     $"Arrays ({nameof(precisionValues)}, {nameof(recallValues)}) must have same size.");
 
-            var inputLength = precisionValues.Length;
-            var resultLength = precisionValues.Length + 3;
+            var orderedIndices = recallValues
+                .Select((recall, index) => (Recall: recall, Index: index))
+                .OrderBy(i => i.Recall)
+                .ThenBy(i => i.Index)
+                .Select(i => i.Index)
+                .ToArray();
 
-            var interpolatedPrecisionValues = new double[resultLength];
-            var interpolatedRecallValues = new double[resultLength];
-            var result = new List<PrecisionRecallCurveDataPoint>(resultLength);
+            var resultDataPoints = new List<PrecisionRecallCurveDataPoint>(precisionValues.Length + 2);
 
-            Array.Copy(precisionValues, 0, interpolatedPrecisionValues, 1, inputLength);
-            interpolatedPrecisionValues[0] = 1d;
-            interpolatedPrecisionValues[resultLength - 1] = 0d;
-            interpolatedPrecisionValues[resultLength - 2] = 0d;
+            var previousDataPoint = new PrecisionRecallCurveDataPoint(1D, 0D);
+            resultDataPoints.Add(previousDataPoint);
 
-            Array.Copy(recallValues, 0, interpolatedRecallValues, 1, inputLength);
-            interpolatedRecallValues[0] = 0d;
-            interpolatedRecallValues[resultLength - 1] = 1d;
-            interpolatedRecallValues[resultLength - 2] = interpolatedRecallValues[resultLength - 3];
-
-            for (var i = resultLength - 1; i > 0; i--)
-                interpolatedPrecisionValues[i - 1] =
-                    Math.Max(interpolatedPrecisionValues[i - 1], interpolatedPrecisionValues[i]);
-
-
-            var lastPoint =
-                new PrecisionRecallCurveDataPoint(interpolatedPrecisionValues[0], interpolatedRecallValues[0]);
-            result.Add(lastPoint);
-
-            for (var i = 1; i < resultLength - 1; i++)
+            foreach (var index in orderedIndices)
             {
-                if (AreEqual(interpolatedPrecisionValues[i + 1], lastPoint.Precision) == false &&
-                    AreEqual(interpolatedRecallValues[i + 1], lastPoint.Recall) == false)
+                var precision = precisionValues[index];
+                var recall = recallValues[index];
+
+                if (AreEqual(precision, previousDataPoint.Precision) &&
+                    AreEqual(recall, previousDataPoint.Recall))
                 {
-                    lastPoint =
-                        new PrecisionRecallCurveDataPoint(
-                            interpolatedPrecisionValues[i],
-                            interpolatedRecallValues[i]);
-                    result.Add(lastPoint);
+                    continue;
                 }
+
+                previousDataPoint = new PrecisionRecallCurveDataPoint(precision, recall);
+                resultDataPoints.Add(previousDataPoint);
             }
 
-            result.Add(new PrecisionRecallCurveDataPoint(interpolatedPrecisionValues[resultLength - 1],
-                interpolatedRecallValues[resultLength - 1]));
-
-            return result.ToArray();
+            return resultDataPoints.ToArray();
         }
 
         private static bool AreEqual(double left, double right)
