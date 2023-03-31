@@ -148,7 +148,7 @@ namespace Byndyusoft.ML.Tools.Metrics.Helpers
             int maxPointCount,
             double tolerance = 0d)
         {
-            if (maxPointCount < MinPoints || points.Length < maxPointCount)
+            if (maxPointCount < MinPoints)
                 return points;
 
             var segments = GetSegments(points).ToArray();
