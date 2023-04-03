@@ -100,9 +100,9 @@ namespace Byndyusoft.ML.Tools.Metrics.Helpers
 
         private static double CalculateAreaUnderSegment(PrecisionRecallCurveDataPoint currentDataPoint, PrecisionRecallCurveDataPoint previousDataPoint)
         {
-            var basesHalfSum = (currentDataPoint.Precision + previousDataPoint.Precision) / 2D;
+            var halfSumOfBases = (currentDataPoint.Precision + previousDataPoint.Precision) / 2D;
             var height = currentDataPoint.Recall - previousDataPoint.Recall;
-            var trapezoidArea = basesHalfSum * height;
+            var trapezoidArea = halfSumOfBases * height;
 
             return trapezoidArea;
         }
@@ -115,10 +115,10 @@ namespace Byndyusoft.ML.Tools.Metrics.Helpers
                 throw new ArgumentException(
                     $"Arrays ({nameof(precisionValues)}, {nameof(recallValues)}) must have same size.");
 
-            var resultDataPoints = new List<PrecisionRecallCurveDataPoint>(precisionValues.Count + 2);
+            var curveDataPoints = new List<PrecisionRecallCurveDataPoint>(precisionValues.Count + 2);
 
             var previousDataPoint = new PrecisionRecallCurveDataPoint(1D, 0D);
-            resultDataPoints.Add(previousDataPoint);
+            curveDataPoints.Add(previousDataPoint);
 
             void AddDataPointIfNotEqualToPrevious(double precision, double recall)
             {
@@ -129,7 +129,7 @@ namespace Byndyusoft.ML.Tools.Metrics.Helpers
                 }
 
                 previousDataPoint = new PrecisionRecallCurveDataPoint(precision, recall);
-                resultDataPoints.Add(previousDataPoint);
+                curveDataPoints.Add(previousDataPoint);
             }
 
             for (var index = 0; index < precisionValues.Count; ++index)
@@ -142,7 +142,7 @@ namespace Byndyusoft.ML.Tools.Metrics.Helpers
 
             AddDataPointIfNotEqualToPrevious(0D, 1D);
 
-            return resultDataPoints.ToArray();
+            return curveDataPoints.ToArray();
         }
 
         private static bool AreEqual(double left, double right)
