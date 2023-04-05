@@ -22,7 +22,7 @@ namespace Byndyusoft.ML.Tools.Metrics.UnitTests
         public void Calculate_ReturnsExpectedResult(MultiClassPrecisionRecallCurvesCalculateTestData data)
         {
             // Act
-            var result = _calculator.Calculate(data.Arguments);
+            var result = _calculator.Calculate(data.ClassificationResultsArgument, data.SettingsArgument);
 
             // Assert
             result.MeanAveragePrecision.Should().BeApproximately(data.ExpectedMeanAveragePrecision, data.Epsilon);

@@ -10,22 +10,24 @@ namespace Byndyusoft.ML.Tools.Metrics.Helpers
 {
     public static class PrecisionRecallCurveCalculatorHelper
     {
-        public static PrecisionRecallCurve Calculate(
+        public static PrecisionRecallCurve? Calculate(
             string classValue, 
             ClassificationResultWithConfidence[] classificationResults,
             PrecisionRecallCurveSettings precisionRecallCurveSettings)
         {
+            // Сортируем по коэффициентам уверенности. Рассчитываем точки графика по порогам, соответствующим этим коэффициентам
             classificationResults = classificationResults.OrderByDescending(i => i.Confidence).ToArray();
 
+            // Рассчитываем TP и FP для каждого порога
             var falsePositives = new int[classificationResults.Length];
             var truePositives = new int[classificationResults.Length];
-            var recallValues = new double[classificationResults.Length];
-            var precisionValues = new double[classificationResults.Length];
 
+            // Количество TP + FN, оно является инвариантным для каждого порога (количество образцов, входящих в этот класс)
             var totalActualClassElements = 0;
 
             for (var i = 0; i < classificationResults.Length; i++)
             {
+                // TP и FP рассчитываются кумулятивно, т.к. чем ниже порог, тем их становится не меньше
                 truePositives[i] = i == 0 ? 0 : truePositives[i - 1];
                 falsePositives[i] = i == 0 ? 0 : falsePositives[i - 1];
 
@@ -45,14 +47,24 @@ namespace Byndyusoft.ML.Tools.Metrics.Helpers
                 }
             }
 
+            var recallValues = new List<double>(classificationResults.Length);
+            var precisionValues = new List<double>(classificationResults.Length);
+
             for (var i = 0; i < classificationResults.Length; i++)
             {
-                precisionValues[i] = SafeDivideOrOne(truePositives[i], truePositives[i] + falsePositives[i]);
-                recallValues[i] = SafeDivideOrOne(truePositives[i], totalActualClassElements);
+                if (TryDivide(truePositives[i], truePositives[i] + falsePositives[i], out var precision) &&
+                    TryDivide(truePositives[i], totalActualClassElements, out var recall))
+                {
+                    precisionValues.Add(precision);
+                    recallValues.Add(recall);
+                }
             }
 
+            if (precisionValues.Any() == false)
+                return null;
+
             var precisionRecallCurvePoints =
-                CalculateInterpolatedPrecisionRecallCurveDataPoints(precisionValues, recallValues);
+                CalculatePrecisionRecallCurveDataPoints(precisionValues, recallValues);
 
             var averagePrecision = CalculateAveragePrecision(precisionRecallCurvePoints);
 
@@ -64,12 +76,15 @@ namespace Byndyusoft.ML.Tools.Metrics.Helpers
                 precisionRecallCurvePoints);
         }
 
-        private static double SafeDivideOrOne(int dividend, int divisor)
+        private static bool TryDivide(int dividend, int divisor, out double result)
         {
-            if (divisor == 0)
-                return 0;
+            result = default;
 
-            return (double)dividend / divisor;
+            if (divisor == 0)
+                return false;
+
+            result = (double)dividend / divisor;
+            return true;
         }
 
         private static double CalculateAveragePrecision(PrecisionRecallCurveDataPoint[] precisionRecallCurvePoints)
@@ -78,61 +93,56 @@ namespace Byndyusoft.ML.Tools.Metrics.Helpers
                 ParallelEnumerable
                     .Range(1, precisionRecallCurvePoints.Length - 1)
                     .Sum(index =>
-                        precisionRecallCurvePoints[index].Precision *
-                        (precisionRecallCurvePoints[index].Recall - precisionRecallCurvePoints[index - 1].Recall));
+                        CalculateAreaUnderSegment(
+                            precisionRecallCurvePoints[index],
+                            precisionRecallCurvePoints[index - 1]));
         }
 
-        private static PrecisionRecallCurveDataPoint[] CalculateInterpolatedPrecisionRecallCurveDataPoints(
-            double[] precisionValues,
-            double[] recallValues)
+        private static double CalculateAreaUnderSegment(PrecisionRecallCurveDataPoint currentDataPoint, PrecisionRecallCurveDataPoint previousDataPoint)
         {
-            if (precisionValues.Length != recallValues.Length)
+            var halfSumOfBases = (currentDataPoint.Precision + previousDataPoint.Precision) / 2D;
+            var height = currentDataPoint.Recall - previousDataPoint.Recall;
+            var trapezoidArea = halfSumOfBases * height;
+
+            return trapezoidArea;
+        }
+
+        private static PrecisionRecallCurveDataPoint[] CalculatePrecisionRecallCurveDataPoints(
+            List<double> precisionValues,
+            List<double> recallValues)
+        {
+            if (precisionValues.Count != recallValues.Count)
                 throw new ArgumentException(
                     $"Arrays ({nameof(precisionValues)}, {nameof(recallValues)}) must have same size.");
 
-            var inputLength = precisionValues.Length;
-            var resultLength = precisionValues.Length + 3;
+            var curveDataPoints = new List<PrecisionRecallCurveDataPoint>(precisionValues.Count + 2);
 
-            var interpolatedPrecisionValues = new double[resultLength];
-            var interpolatedRecallValues = new double[resultLength];
-            var result = new List<PrecisionRecallCurveDataPoint>(resultLength);
+            var previousDataPoint = new PrecisionRecallCurveDataPoint(1D, 0D);
+            curveDataPoints.Add(previousDataPoint);
 
-            Array.Copy(precisionValues, 0, interpolatedPrecisionValues, 1, inputLength);
-            interpolatedPrecisionValues[0] = 1d;
-            interpolatedPrecisionValues[resultLength - 1] = 0d;
-            interpolatedPrecisionValues[resultLength - 2] = 0d;
-
-            Array.Copy(recallValues, 0, interpolatedRecallValues, 1, inputLength);
-            interpolatedRecallValues[0] = 0d;
-            interpolatedRecallValues[resultLength - 1] = 1d;
-            interpolatedRecallValues[resultLength - 2] = interpolatedRecallValues[resultLength - 3];
-
-            for (var i = resultLength - 1; i > 0; i--)
-                interpolatedPrecisionValues[i - 1] =
-                    Math.Max(interpolatedPrecisionValues[i - 1], interpolatedPrecisionValues[i]);
-
-
-            var lastPoint =
-                new PrecisionRecallCurveDataPoint(interpolatedPrecisionValues[0], interpolatedRecallValues[0]);
-            result.Add(lastPoint);
-
-            for (var i = 1; i < resultLength - 1; i++)
+            void AddDataPointIfNotEqualToPrevious(double precision, double recall)
             {
-                if (AreEqual(interpolatedPrecisionValues[i + 1], lastPoint.Precision) == false &&
-                    AreEqual(interpolatedRecallValues[i + 1], lastPoint.Recall) == false)
+                if (AreEqual(precision, previousDataPoint.Precision) &&
+                    AreEqual(recall, previousDataPoint.Recall))
                 {
-                    lastPoint =
-                        new PrecisionRecallCurveDataPoint(
-                            interpolatedPrecisionValues[i],
-                            interpolatedRecallValues[i]);
-                    result.Add(lastPoint);
+                    return;
                 }
+
+                previousDataPoint = new PrecisionRecallCurveDataPoint(precision, recall);
+                curveDataPoints.Add(previousDataPoint);
             }
 
-            result.Add(new PrecisionRecallCurveDataPoint(interpolatedPrecisionValues[resultLength - 1],
-                interpolatedRecallValues[resultLength - 1]));
+            for (var index = 0; index < precisionValues.Count; ++index)
+            {
+                var precision = precisionValues[index];
+                var recall = recallValues[index];
 
-            return result.ToArray();
+                AddDataPointIfNotEqualToPrevious(precision, recall);
+            }
+
+            AddDataPointIfNotEqualToPrevious(0D, 1D);
+
+            return curveDataPoints.ToArray();
         }
 
         private static bool AreEqual(double left, double right)
