@@ -28,7 +28,7 @@ namespace Byndyusoft.ML.Tools.Metrics.UnitTests.TestsData.Metrics
         {
             var argument = ClassificationResultGenerator.GetForMetricSample();
 
-            var expectedCounts = new MultiClassConfusionMatrices();
+            var expectedCounts = new MultiClassConfusionMatrices(22);
 
             expectedCounts.AddCount("1", ConfusionMatrixValue.TruePositive, 4);
             expectedCounts.AddCount("1", ConfusionMatrixValue.FalsePositive, 2);

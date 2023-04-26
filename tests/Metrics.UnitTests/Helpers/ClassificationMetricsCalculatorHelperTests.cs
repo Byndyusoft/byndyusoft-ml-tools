@@ -17,7 +17,7 @@ namespace Byndyusoft.ML.Tools.Metrics.UnitTests.Helpers
             Console.WriteLine(testData.Description);
 
             // Act
-            var classificationMetrics = ClassificationMetricsCalculatorHelper.CalculateClassificationMetrics(testData.Argument);
+            var classificationMetrics = ClassificationMetricsCalculatorHelper.CalculateClassificationMetricsForOneClass(testData.Argument);
 
             // Assert
             classificationMetrics.Should()
