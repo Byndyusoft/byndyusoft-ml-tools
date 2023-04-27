@@ -10,9 +10,17 @@ namespace Byndyusoft.ML.Tools.Metrics.Helpers
     {
         private readonly Dictionary<string, ConfusionMatrix> _countsByClass = new();
 
+        public int SampleCount { get; }
+
+        public MultiClassConfusionMatrices(int sampleCount)
+        {
+            SampleCount = sampleCount;
+        }
+
         public static MultiClassConfusionMatrices Generate(ClassificationResult[] classificationResults)
         {
-            var multiClassConfusionMatrixValueCounts = new MultiClassConfusionMatrices();
+            var sampleCount = classificationResults.Length;
+            var multiClassConfusionMatrixValueCounts = new MultiClassConfusionMatrices(sampleCount);
 
             void Add(ClassificationResult classificationResult, string? @class)
             {
@@ -35,7 +43,7 @@ namespace Byndyusoft.ML.Tools.Metrics.Helpers
             foreach (var (_, confusionMatrixValueCounts) in multiClassConfusionMatrixValueCounts.Enumerate())
             {
                 confusionMatrixValueCounts.AddCount(ConfusionMatrixValue.TrueNegative,
-                    classificationResults.Length - confusionMatrixValueCounts.GetTotalCount());
+                    sampleCount - confusionMatrixValueCounts.GetTotalCount());
             }
 
             return multiClassConfusionMatrixValueCounts;

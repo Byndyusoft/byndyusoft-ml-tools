@@ -40,7 +40,7 @@ namespace Byndyusoft.ML.Tools.Metrics.UnitTests.TestsData.Metrics
             {
                 Description = "Test samples for MetricsSample.xlsx for class '1'",
                 Argument = argument,
-                ExpectedResult = new ClassificationMetrics(0.667D, 0.571D, 0.615D),
+                ExpectedResult = new ClassificationMetrics(0.667D, 0.571D, 0.615D, 9),
                 Epsilon = 0.001D
             };
         }
@@ -57,7 +57,7 @@ namespace Byndyusoft.ML.Tools.Metrics.UnitTests.TestsData.Metrics
             {
                 Description = "Precision cannot be calculated",
                 Argument = argument,
-                ExpectedResult = new ClassificationMetrics(null, 0, 0),
+                ExpectedResult = new ClassificationMetrics(null, 0, 0, 3),
                 Epsilon = 0.001D
             };
         }
@@ -74,7 +74,7 @@ namespace Byndyusoft.ML.Tools.Metrics.UnitTests.TestsData.Metrics
             {
                 Description = "Recall cannot be calculated",
                 Argument = argument,
-                ExpectedResult = new ClassificationMetrics(0, null, 0),
+                ExpectedResult = new ClassificationMetrics(0, null, 0, 2),
                 Epsilon = 0.001D
             };
         }
@@ -91,7 +91,7 @@ namespace Byndyusoft.ML.Tools.Metrics.UnitTests.TestsData.Metrics
             {
                 Description = "Precision and recall cannot be calculated",
                 Argument = argument,
-                ExpectedResult = new ClassificationMetrics(null, null, null),
+                ExpectedResult = new ClassificationMetrics(null, null, null, 0),
                 Epsilon = 0.001D
             };
         }

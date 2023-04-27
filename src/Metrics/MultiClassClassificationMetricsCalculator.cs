@@ -16,7 +16,7 @@ namespace Byndyusoft.ML.Tools.Metrics
 
             foreach (var (@class, confusionMatrix) in multiClassConfusionMatrices.Enumerate())
             {
-                var classificationMetrics = ClassificationMetricsCalculatorHelper.CalculateClassificationMetrics(confusionMatrix);
+                var classificationMetrics = ClassificationMetricsCalculatorHelper.CalculateClassificationMetricsForOneClass(confusionMatrix);
                 var oneClassClassificationMetrics = new OneClassClassificationMetrics(@class, classificationMetrics);
                 oneClassClassificationMetricsList.Add(oneClassClassificationMetrics);
             }

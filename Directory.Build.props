@@ -8,7 +8,7 @@
 		<AssemblyName>Byndyusoft.ML.Tools.$(MSBuildProjectName)</AssemblyName>
 		<RootNamespace>Byndyusoft.ML.Tools.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
 		
-		<VersionPrefix>1.1.0</VersionPrefix>
+		<VersionPrefix>1.2.0</VersionPrefix>
 		<Authors>Byndyusoft</Authors>
 		
 		<PackageTags>Byndyusoft;ML</PackageTags>
