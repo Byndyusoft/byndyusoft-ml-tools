@@ -16,7 +16,8 @@ namespace Byndyusoft.ML.Tools.Metrics
 
             foreach (var (@class, confusionMatrix) in multiClassConfusionMatrices.Enumerate())
             {
-                var classificationMetrics = ClassificationMetricsCalculatorHelper.CalculateClassificationMetricsForOneClass(confusionMatrix);
+                var classificationMetrics =
+                    ClassificationMetricsCalculatorHelper.CalculateClassificationMetricsForOneClass(confusionMatrix);
                 var oneClassClassificationMetrics = new OneClassClassificationMetrics(@class, classificationMetrics);
                 oneClassClassificationMetricsList.Add(oneClassClassificationMetrics);
             }
@@ -25,8 +26,8 @@ namespace Byndyusoft.ML.Tools.Metrics
                 oneClassClassificationMetricsList.Select(i => i.ClassificationMetrics).ToArray());
             var microMetrics = ClassificationMetricsCalculatorHelper.CalculateMicroMetrics(multiClassConfusionMatrices);
 
-
-            return new MultiClassClassificationMetrics(oneClassClassificationMetricsList.ToArray(), microMetrics, macroMetrics);
+            return new MultiClassClassificationMetrics(oneClassClassificationMetricsList.ToArray(), microMetrics,
+                macroMetrics);
         }
     }
 }
