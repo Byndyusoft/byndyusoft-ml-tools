@@ -45,7 +45,7 @@ namespace Byndyusoft.ML.Tools.Metrics
 
         private bool IsClassTarget(string? @class, string nonTargetClass)
         {
-            return string.IsNullOrEmpty(@class) && string.Equals(@class, nonTargetClass) == false;
+            return string.IsNullOrEmpty(@class) == false && string.Equals(@class, nonTargetClass) == false;
         }
 
         private UserPostActionCounts CalculateTotalUserPostActionCounts(
