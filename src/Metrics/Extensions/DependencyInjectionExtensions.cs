@@ -11,6 +11,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             services.TryAddSingleton<IMultiClassPrecisionRecallCurvesCalculator, MultiClassPrecisionRecallCurvesCalculator>();
             services.TryAddSingleton<IMultiClassClassificationMetricsCalculator, MultiClassClassificationMetricsCalculator>();
+            services.TryAddSingleton<IMultiClassUserPostActionCountsCalculator, MultiClassUserPostActionCountsCalculator>();
 
             return services;
         }
