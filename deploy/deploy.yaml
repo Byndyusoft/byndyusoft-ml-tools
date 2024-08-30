@@ -1,0 +1,15 @@
+clusterName: ["bs-01-stage", "bs-01-prod"]
+project: "bs-extractor-expert"
+registryCredentialsId: "artifacts-registry"
+registryUrl: "artifacts-docker.tech.byndyusoft.com"
+registryPackageUrl: "https://artifacts.tech.byndyusoft.com/repository/nuget-hosted/index.json"
+secret:
+  provider: vault
+  vaultUrl: "https://vault.tech.byndyusoft.com"
+  vaultAppRoleCredential: "jenkins-backend-role"
+serviceAccount: "deploy-agent"
+githubCredentialsId: "bs-01-tech-jenkins-cicd"
+yaml: |-
+  spec:
+    nodeSelector:
+      node-role.kubernetes.io/worker-pt: ""
